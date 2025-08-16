@@ -1,16 +1,15 @@
 import { supabase } from '@/lib/supabase'
-import TranslatedHomePage from './components/TranslatedHomePage'
+import TranslatedProvidersPage from '../components/TranslatedProvidersPage'
 
-// Fetch featured providers from Cuenca
+// Fetch providers from Supabase
 async function getProviders() {
   try {
     const { data } = await supabase
       .from('providers')
       .select('*')
       .order('rating', { ascending: false })
-      .limit(8)
     
-    // If no providers in database, return featured Cuenca professionals
+    // If no providers in database, return sample data
     if (!data || data.length === 0) {
       return [
         {
@@ -19,7 +18,7 @@ async function getProviders() {
           service_type: 'Plomero Master',
           location: 'El Centro',
           rating: 5.0,
-          description: 'Especialista en plomería residencial con 8+ años de experiencia'
+          description: 'Especialista en plomería residencial y comercial'
         },
         {
           id: '2',
@@ -27,7 +26,7 @@ async function getProviders() {
           service_type: 'Electricista Certificada',
           location: 'San Joaquín',
           rating: 4.9,
-          description: 'Electricista certificada especializada en instalaciones residenciales'
+          description: 'Electricista certificada con 6 años de experiencia'
         },
         {
           id: '3',
@@ -35,7 +34,7 @@ async function getProviders() {
           service_type: 'Carpintero Artesanal',
           location: 'Yanuncay',
           rating: 4.8,
-          description: 'Carpintero artesanal especializado en muebles a medida'
+          description: 'Carpintero especializado en muebles a medida'
         },
         {
           id: '4',
@@ -43,7 +42,7 @@ async function getProviders() {
           service_type: 'Pintora Profesional',
           location: 'San Sebastián',
           rating: 4.9,
-          description: 'Pintora profesional especializada en pintura decorativa'
+          description: 'Pintora con especialización en pintura decorativa'
         },
         {
           id: '5',
@@ -51,7 +50,7 @@ async function getProviders() {
           service_type: 'Jardinero Paisajista',
           location: 'Totoracocha',
           rating: 4.7,
-          description: 'Jardinero paisajista con experiencia en diseño de jardines'
+          description: 'Jardinero paisajista con diseño de jardines'
         },
         {
           id: '6',
@@ -59,7 +58,7 @@ async function getProviders() {
           service_type: 'Limpieza Premium',
           location: 'Monay',
           rating: 4.8,
-          description: 'Servicio de limpieza premium para hogares y oficinas'
+          description: 'Servicio de limpieza premium y profesional'
         },
         {
           id: '7',
@@ -67,7 +66,7 @@ async function getProviders() {
           service_type: 'Cerrajero 24/7',
           location: 'El Batán',
           rating: 4.9,
-          description: 'Cerrajero disponible 24/7 para emergencias'
+          description: 'Cerrajero disponible las 24 horas'
         },
         {
           id: '8',
@@ -75,7 +74,7 @@ async function getProviders() {
           service_type: 'Albañil Especialista',
           location: 'Ricaurte',
           rating: 4.6,
-          description: 'Albañil especialista en construcción y remodelación'
+          description: 'Albañil especializada en construcción residencial'
         },
         {
           id: '9',
@@ -119,37 +118,9 @@ async function getProviders() {
   }
 }
 
-async function getServices() {
-  const { data } = await supabase
-    .from('services')
-    .select('*, providers(count)')
-    .limit(8)
-  
-  return data || []
-}
 
-async function getStats() {
-  const { count: userCount } = await supabase
-    .from('users')
-    .select('*', { count: 'exact', head: true })
-  
-  const { count: providerCount } = await supabase
-    .from('providers')
-    .select('*', { count: 'exact', head: true })
-
-  return { users: userCount || 2500, providers: providerCount || 500 }
-}
-
-export default async function Home() {
+export default async function ProvidersPage() {
   const providers = await getProviders()
-  const services = await getServices()
-  const stats = await getStats()
 
-  return (
-    <TranslatedHomePage 
-      providers={providers} 
-      services={services} 
-      stats={stats} 
-    />
-  )
+  return <TranslatedProvidersPage providers={providers} />
 }
