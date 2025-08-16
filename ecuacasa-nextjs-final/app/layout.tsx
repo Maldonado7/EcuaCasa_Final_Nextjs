@@ -1,7 +1,7 @@
-// Temporarily disabled Clerk
-// import { ClerkProvider } from '@clerk/nextjs'
+import { ClerkProvider } from '@clerk/nextjs'
 import { Inter } from 'next/font/google'
 import { TranslationProvider } from './context/TranslationContext'
+import Footer from './components/Footer'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -17,12 +17,15 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="es">
-      <body className={inter.className}>
-        <TranslationProvider>
-          {children}
-        </TranslationProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="es">
+        <body className={inter.className}>
+          <TranslationProvider>
+            {children}
+            <Footer />
+          </TranslationProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   )
 }

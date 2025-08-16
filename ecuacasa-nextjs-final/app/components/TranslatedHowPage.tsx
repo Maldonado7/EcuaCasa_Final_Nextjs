@@ -1,12 +1,14 @@
 'use client'
 
 import { useTranslation } from '../context/TranslationContext'
+import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs'
 import LanguageToggle from './LanguageToggle'
 import Link from 'next/link'
 import { Search, UserCheck, Star, ArrowRight, Shield, Clock, DollarSign, CheckCircle } from 'lucide-react'
 
 export default function TranslatedHowPage() {
   const { t } = useTranslation()
+  const { isSignedIn, user } = useUser()
 
   const steps = [
     {
@@ -84,7 +86,7 @@ export default function TranslatedHowPage() {
               <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center">
                 <span className="text-white font-bold text-lg">EC</span>
               </div>
-              <span className="font-black text-xl">EcuaCasa</span>
+              <span className="font-black text-xl text-gray-900">EcuaCasa</span>
             </Link>
             
             <div className="hidden md:flex items-center space-x-8">
@@ -101,16 +103,42 @@ export default function TranslatedHowPage() {
 
             <div className="flex items-center gap-4">
               <LanguageToggle />
-              <Link href="/providers/register">
-                <button className="border border-purple-600 text-purple-600 px-6 py-2.5 rounded-full font-semibold hover:bg-purple-50 transition-all">
-                  {t('nav.professional')}
-                </button>
-              </Link>
-              <Link href="/sign-up">
-                <button className="bg-black text-white px-6 py-2.5 rounded-full font-semibold hover:bg-gray-800 transition-all">
-                  {t('nav.start')}
-                </button>
-              </Link>
+              {isSignedIn ? (
+                <>
+                  <Link href="/dashboard">
+                    <button className="text-gray-700 hover:text-purple-600 font-medium transition-all">
+                      Mi Dashboard
+                    </button>
+                  </Link>
+                  <Link href="/providers/register">
+                    <button className="border border-purple-600 text-purple-600 px-6 py-2.5 rounded-full font-semibold hover:bg-purple-50 transition-all">
+                      {t('nav.professional')}
+                    </button>
+                  </Link>
+                  <UserButton 
+                    appearance={{
+                      elements: {
+                        avatarBox: 'w-10 h-10'
+                      }
+                    }}
+                    userProfileMode="navigation"
+                    userProfileUrl="/dashboard"
+                  />
+                </>
+              ) : (
+                <>
+                  <SignInButton mode="modal">
+                    <button className="border border-purple-600 text-purple-600 px-6 py-2.5 rounded-full font-semibold hover:bg-purple-50 transition-all">
+                      Iniciar Sesión
+                    </button>
+                  </SignInButton>
+                  <SignUpButton mode="modal">
+                    <button className="bg-black text-white px-6 py-2.5 rounded-full font-semibold hover:bg-gray-800 transition-all">
+                      {t('nav.start')}
+                    </button>
+                  </SignUpButton>
+                </>
+              )}
             </div>
           </div>
         </div>

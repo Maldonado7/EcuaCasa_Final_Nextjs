@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from '../context/TranslationContext'
 import LanguageToggle from './LanguageToggle'
+import BookingModal from './BookingModal'
 import Link from 'next/link'
 import { ArrowLeft, Star, Shield, Clock, MapPin, Phone, MessageCircle, Calendar, Award, CheckCircle, Users, DollarSign, Wrench, Camera, Heart } from 'lucide-react'
 
@@ -15,6 +16,7 @@ export default function TranslatedProviderDetailPage({ providerId }: TranslatedP
   const [provider, setProvider] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('overview')
+  const [showBookingModal, setShowBookingModal] = useState(false)
 
   // Mock provider data - in real app this would fetch from API
   useEffect(() => {
@@ -234,10 +236,10 @@ export default function TranslatedProviderDetailPage({ providerId }: TranslatedP
                     <p className="font-bold text-lg text-gray-900">{provider.response_time}</p>
                     <p className="text-xs text-gray-600">Respuesta</p>
                   </div>
-                  <div className="bg-white border border-gray-200 rounded-xl p-4 text-center shadow-sm">
-                    <DollarSign className="w-6 h-6 text-purple-500 mx-auto mb-2" />
-                    <p className="font-bold text-lg text-gray-900">{provider.price_range}</p>
-                    <p className="text-xs text-gray-600">Tarifa</p>
+                  <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 text-center shadow-sm">
+                    <DollarSign className="w-6 h-6 text-purple-600 mx-auto mb-2" />
+                    <p className="font-bold text-xl text-purple-700">{provider.price_range}</p>
+                    <p className="text-xs text-purple-600 font-medium">Tarifa</p>
                   </div>
                 </div>
 
@@ -250,7 +252,10 @@ export default function TranslatedProviderDetailPage({ providerId }: TranslatedP
                     <MessageCircle className="w-4 h-4" />
                     Contactar por WhatsApp
                   </button>
-                  <button className="bg-purple-600 text-white py-3 px-5 rounded-xl font-semibold text-base hover:bg-purple-700 transition-all flex items-center gap-2 w-fit">
+                  <button 
+                    onClick={() => setShowBookingModal(true)}
+                    className="bg-purple-600 text-white py-3 px-5 rounded-xl font-semibold text-base hover:bg-purple-700 transition-all flex items-center gap-2 w-fit"
+                  >
                     <Calendar className="w-4 h-4" />
                     Agendar
                   </button>
@@ -427,6 +432,15 @@ export default function TranslatedProviderDetailPage({ providerId }: TranslatedP
           </div>
         </div>
       </section>
+
+      {/* Booking Modal */}
+      {provider && (
+        <BookingModal 
+          isOpen={showBookingModal}
+          onClose={() => setShowBookingModal(false)}
+          provider={provider}
+        />
+      )}
     </div>
   )
 }

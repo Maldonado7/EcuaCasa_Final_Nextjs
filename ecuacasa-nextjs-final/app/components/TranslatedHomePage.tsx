@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import { useTranslation } from '../context/TranslationContext'
+import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs'
 import CombinedLocationSelector from './CombinedLocationSelector'
 import ServiceSelector from './ServiceSelector'
 import LanguageToggle from './LanguageToggle'
 import Link from 'next/link'
-import { Search, Star, Shield, Users, TrendingUp, ArrowRight, Clock, DollarSign } from 'lucide-react'
+import { Search, Star, Shield, Users, TrendingUp, ArrowRight, Clock, DollarSign, Calendar } from 'lucide-react'
 
 interface TranslatedHomePageProps {
   providers: any[]
@@ -16,6 +17,7 @@ interface TranslatedHomePageProps {
 
 export default function TranslatedHomePage({ providers, services, stats }: TranslatedHomePageProps) {
   const { t, language } = useTranslation()
+  const { isSignedIn, user } = useUser()
   const [selectedLocation, setSelectedLocation] = useState('cuenca')
   const [selectedService, setSelectedService] = useState('')
 
@@ -58,7 +60,7 @@ export default function TranslatedHomePage({ providers, services, stats }: Trans
               <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center">
                 <span className="text-white font-bold text-lg">EC</span>
               </div>
-              <span className="font-black text-xl">EcuaCasa</span>
+              <span className="font-black text-xl text-gray-900">EcuaCasa</span>
             </Link>
             
             <div className="hidden md:flex items-center space-x-8">
@@ -75,16 +77,37 @@ export default function TranslatedHomePage({ providers, services, stats }: Trans
 
             <div className="flex items-center gap-4">
               <LanguageToggle />
-              <Link href="/providers/register">
-                <button className="border border-purple-600 text-purple-600 px-6 py-2.5 rounded-full font-semibold hover:bg-purple-50 transition-all">
-                  {t('nav.professional')}
-                </button>
-              </Link>
-              <Link href="/sign-up">
-                <button className="bg-black text-white px-6 py-2.5 rounded-full font-semibold hover:bg-gray-800 transition-all">
-                  {t('nav.start')}
-                </button>
-              </Link>
+              {isSignedIn ? (
+                <>
+                  <Link href="/dashboard">
+                    <button className="text-gray-700 hover:text-purple-600 font-medium transition-all">
+                      Mi Dashboard
+                    </button>
+                  </Link>
+                  <UserButton 
+                    appearance={{
+                      elements: {
+                        avatarBox: 'w-10 h-10'
+                      }
+                    }}
+                    userProfileMode="navigation"
+                    userProfileUrl="/dashboard"
+                  />
+                </>
+              ) : (
+                <>
+                  <SignInButton mode="modal">
+                    <button className="border border-purple-600 text-purple-600 px-6 py-2.5 rounded-full font-semibold hover:bg-purple-50 transition-all">
+                      Iniciar Sesión
+                    </button>
+                  </SignInButton>
+                  <Link href="/sign-up-role">
+                    <button className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2.5 rounded-full font-semibold hover:shadow-lg transition-all">
+                      Crear Cuenta
+                    </button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -226,7 +249,7 @@ export default function TranslatedHomePage({ providers, services, stats }: Trans
       </section>
 
       {/* Providers Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
@@ -240,76 +263,72 @@ export default function TranslatedHomePage({ providers, services, stats }: Trans
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {cuencaProviders.map((provider, i) => (
-              <div key={provider.id} className="relative">
-                {i === 0 && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-1 rounded-full text-xs font-bold z-10 shadow-lg">
-                    {t('providers.featured')}
-                  </div>
-                )}
-                <div className={`bg-white rounded-3xl overflow-hidden ${i === 0 ? 'shadow-2xl ring-2 ring-yellow-400' : 'shadow-xl'} hover:shadow-2xl transition-all`}>
-                  <div className="h-2 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600"></div>
-                  <div className="p-6">
-                    <div className="flex items-start gap-4 mb-4">
-                      <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-400 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg">
-                        {provider.name ? provider.name.charAt(0).toUpperCase() : 'P'}
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-bold text-lg text-gray-900">{provider.name || `Professional ${i + 1}`}</h3>
-                        <p className="text-purple-600 font-semibold text-sm">{provider.service_type || 'Plomero Master'}</p>
-                        <p className="text-gray-500 text-sm">Cuenca - {provider.location || 'El Centro'}</p>
-                        <div className="flex items-center gap-3 mt-2">
-                          <div className="flex items-center gap-1">
-                            <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                            <span className="font-bold text-sm">{provider.rating || '5.0'}</span>
-                          </div>
-                          <span className="text-gray-400">•</span>
-                          <span className="text-sm text-gray-600">{provider.jobs_completed || 342} {t('providers.jobs')}</span>
+              <Link key={provider.id} href={`/providers/${i}`} className="group">
+                <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-200 hover:shadow-xl hover:border-purple-300 transition-all h-full">
+                  {/* Simple Header */}
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                      {provider.name?.charAt(0) || 'P'}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-bold text-gray-900 truncate">
+                        {provider.name || `Professional ${i + 1}`}
+                      </h3>
+                      <p className="text-purple-600 font-medium text-sm">
+                        {provider.service_type || 'Plomero Master'}
+                      </p>
+                      {/* Rating */}
+                      <div className="flex items-center gap-2 mt-1">
+                        <div className="flex items-center">
+                          {[...Array(5)].map((_, idx) => (
+                            <Star 
+                              key={idx} 
+                              className={`w-3 h-3 ${
+                                idx < Math.floor(provider.rating || 5) 
+                                  ? 'text-yellow-500 fill-current' 
+                                  : 'text-gray-300'
+                              }`} 
+                            />
+                          ))}
                         </div>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-2 mb-4">
-                      <div className="bg-gray-50 rounded-xl py-3 text-center">
-                        <p className="text-xs text-gray-500 mb-1">{t('providers.responds')}</p>
-                        <p className="font-bold text-sm">{provider.response_time || '30min'}</p>
-                      </div>
-                      <div className="bg-gray-50 rounded-xl py-3 text-center">
-                        <p className="text-xs text-gray-500 mb-1">{t('providers.price')}</p>
-                        <p className="font-bold text-sm">{provider.price_range || '$$$'}</p>
-                      </div>
-                      <div className="bg-gray-50 rounded-xl py-3 text-center">
-                        <p className="text-xs text-gray-500 mb-1">{t('providers.experience')}</p>
-                        <p className="font-bold text-sm">{provider.experience || '5+'} {t('providers.years')}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex gap-2 mb-4 flex-wrap">
-                      <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-medium">
-                        {[8, 5, 6, 10, 3, 7, 9, 4, 5][i]}+ {t('providers.years')} exp
-                      </span>
-                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">
-                        {t('providers.verified')}
-                      </span>
-                      {i < 3 && (
-                        <span className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-medium">
-                          Top 10
+                        <span className="text-sm text-gray-600">
+                          {provider.rating || '5.0'} ({provider.jobs_completed || 342})
                         </span>
-                      )}
-                    </div>
-
-                    <div className="flex gap-2">
-                      <Link href={`/providers/${i}`} className="flex-1">
-                        <button className="w-full bg-black text-white py-3 rounded-xl font-semibold hover:bg-gray-800 transition-all">
-                          {t('providers.view.profile')}
-                        </button>
-                      </Link>
-                      <button className="bg-purple-100 text-purple-600 px-4 py-3 rounded-xl font-semibold hover:bg-purple-200 transition-all">
-                        💬
-                      </button>
+                      </div>
                     </div>
                   </div>
+
+                  {/* Key Info - Only 3 items */}
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">Precio</span>
+                      <span className="font-semibold text-gray-900">
+                        {provider.price_range || '$25-45/hora'}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">Ubicación</span>
+                      <span className="text-gray-900">
+                        {provider.location || 'El Centro'}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">Respuesta</span>
+                      <span className="text-gray-900">
+                        {provider.response_time || '30min'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Single Badge */}
+                  {provider.verified !== false && (
+                    <div className="flex items-center gap-1 text-green-600 text-sm">
+                      <Shield className="w-4 h-4" />
+                      <span className="font-medium">Verificado</span>
+                    </div>
+                  )}
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

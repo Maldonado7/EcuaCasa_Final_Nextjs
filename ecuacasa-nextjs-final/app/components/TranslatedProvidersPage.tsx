@@ -3,12 +3,14 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useTranslation } from '../context/TranslationContext'
+import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs'
 import CombinedLocationSelector from './CombinedLocationSelector'
 import ServiceSelector from './ServiceSelector'
 import LanguageToggle from './LanguageToggle'
 import ProvidersMap from './ProvidersMap'
+import BookingModal from './BookingModal'
 import Link from 'next/link'
-import { Search, Star, Shield, Clock, MapPin, Filter, ChevronDown, TrendingUp, Wrench, Zap, Hammer, Paintbrush, Grid3X3, Map } from 'lucide-react'
+import { Search, Star, Shield, Clock, MapPin, Filter, ChevronDown, TrendingUp, Wrench, Zap, Hammer, Paintbrush, Grid3X3, Map, Calendar, DollarSign } from 'lucide-react'
 
 interface TranslatedProvidersPageProps {
   providers: any[]
@@ -16,11 +18,14 @@ interface TranslatedProvidersPageProps {
 
 export default function TranslatedProvidersPage({ providers }: TranslatedProvidersPageProps) {
   const { t } = useTranslation()
+  const { isSignedIn, user } = useUser()
   const searchParams = useSearchParams()
   const [filteredProviders, setFilteredProviders] = useState(providers)
   const [selectedLocation, setSelectedLocation] = useState('')
   const [selectedService, setSelectedService] = useState('')
   const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid')
+  const [showBookingModal, setShowBookingModal] = useState(false)
+  const [selectedProvider, setSelectedProvider] = useState<any>(null)
 
   // Initialize search state from URL parameters
   useEffect(() => {
@@ -142,7 +147,7 @@ export default function TranslatedProvidersPage({ providers }: TranslatedProvide
               <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center">
                 <span className="text-white font-bold text-lg">EC</span>
               </div>
-              <span className="font-black text-xl">EcuaCasa</span>
+              <span className="font-black text-xl text-gray-900">EcuaCasa</span>
             </Link>
             
             <div className="hidden md:flex items-center space-x-8">
@@ -159,16 +164,42 @@ export default function TranslatedProvidersPage({ providers }: TranslatedProvide
 
             <div className="flex items-center gap-4">
               <LanguageToggle />
-              <Link href="/providers/register">
-                <button className="border border-purple-600 text-purple-600 px-6 py-2.5 rounded-full font-semibold hover:bg-purple-50 transition-all">
-                  {t('nav.professional')}
-                </button>
-              </Link>
-              <Link href="/sign-up">
-                <button className="bg-black text-white px-6 py-2.5 rounded-full font-semibold hover:bg-gray-800 transition-all">
-                  {t('nav.start')}
-                </button>
-              </Link>
+              {isSignedIn ? (
+                <>
+                  <Link href="/dashboard">
+                    <button className="text-gray-700 hover:text-purple-600 font-medium transition-all">
+                      Mi Dashboard
+                    </button>
+                  </Link>
+                  <Link href="/providers/register">
+                    <button className="border border-purple-600 text-purple-600 px-6 py-2.5 rounded-full font-semibold hover:bg-purple-50 transition-all">
+                      {t('nav.professional')}
+                    </button>
+                  </Link>
+                  <UserButton 
+                    appearance={{
+                      elements: {
+                        avatarBox: 'w-10 h-10'
+                      }
+                    }}
+                    userProfileMode="navigation"
+                    userProfileUrl="/dashboard"
+                  />
+                </>
+              ) : (
+                <>
+                  <SignInButton mode="modal">
+                    <button className="border border-purple-600 text-purple-600 px-6 py-2.5 rounded-full font-semibold hover:bg-purple-50 transition-all">
+                      Iniciar Sesión
+                    </button>
+                  </SignInButton>
+                  <Link href="/sign-up-role">
+                    <button className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2.5 rounded-full font-semibold hover:shadow-lg transition-all">
+                      Crear Cuenta
+                    </button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -247,7 +278,7 @@ export default function TranslatedProvidersPage({ providers }: TranslatedProvide
       </section>
 
       {/* Providers Grid */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-gray-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
             <div>
@@ -302,87 +333,99 @@ export default function TranslatedProvidersPage({ providers }: TranslatedProvide
             /* Provider Cards Grid */
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProviders.length > 0 ? filteredProviders.map((provider, i) => (
-              <div key={provider.id || i} className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all group">
-                {/* Featured Badge */}
-                {i === 0 && (
-                  <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-center py-2 rounded-t-2xl text-sm font-bold">
-                    ⭐ {t('providers.featured').toUpperCase()}
-                  </div>
-                )}
-                
+              <div key={provider.id || i} className="bg-white rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg hover:border-purple-200 transition-all">
                 <div className="p-6">
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-pink-400 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg">
-                      {provider.name ? provider.name.charAt(0).toUpperCase() : 'P'}
+                  {/* Header */}
+                  <div className="flex items-start gap-4 mb-5">
+                    <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                      {provider.name?.charAt(0).toUpperCase() || 'P'}
                     </div>
-                    <div className="flex-1">
-                      <h3 className="font-bold text-xl text-gray-900">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-bold text-lg text-gray-900 truncate">
                         {provider.name || `Professional ${i + 1}`}
                       </h3>
-                      <p className="text-purple-600 font-semibold">
+                      <p className="text-purple-600 font-semibold text-sm">
                         {provider.service_type || 'Plomero Master'}
                       </p>
+                      {/* Rating inline */}
                       <div className="flex items-center gap-2 mt-2">
-                        <MapPin className="w-4 h-4 text-gray-400" />
+                        <div className="flex items-center">
+                          {[...Array(5)].map((_, idx) => (
+                            <Star 
+                              key={idx} 
+                              className={`w-4 h-4 ${
+                                idx < Math.floor(provider.rating || 5) 
+                                  ? 'text-yellow-500 fill-current' 
+                                  : 'text-gray-300'
+                              }`} 
+                            />
+                          ))}
+                        </div>
                         <span className="text-sm text-gray-600">
-                          {provider.location || 'Cuenca Centro'}
+                          {provider.rating || 5.0} ({provider.reviews || 342})
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Stats Grid */}
-                  <div className="grid grid-cols-3 gap-2 mb-4">
-                    <div className="bg-gray-50 rounded-xl py-3 text-center">
-                      <div className="flex items-center justify-center gap-1 mb-1">
-                        <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                        <span className="font-bold text-sm">
-                          {provider.rating || 5.0}
-                        </span>
-                      </div>
-                      <p className="text-xs text-gray-500">{provider.reviews || 342} {t('providers.reviews')}</p>
+                  {/* Key Info */}
+                  <div className="bg-gray-50 rounded-xl p-3 space-y-2 mb-5">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600 flex items-center gap-1">
+                        <DollarSign className="w-3 h-3" /> Precio
+                      </span>
+                      <span className="font-semibold text-purple-700">
+                        {provider.price_range || '$25-45/hora'}
+                      </span>
                     </div>
-                    <div className="bg-gray-50 rounded-xl py-3 text-center">
-                      <div className="flex items-center justify-center gap-1 mb-1">
-                        <Clock className="w-4 h-4 text-purple-500" />
-                        <span className="font-bold text-sm">
-                          {provider.response_time || '30min'}
-                        </span>
-                      </div>
-                      <p className="text-xs text-gray-500">{t('providers.response')}</p>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600 flex items-center gap-1">
+                        <MapPin className="w-3 h-3" /> Ubicación
+                      </span>
+                      <span className="text-gray-900">
+                        {provider.location || 'Cuenca Centro'}
+                      </span>
                     </div>
-                    <div className="bg-gray-50 rounded-xl py-3 text-center">
-                      <p className="font-bold text-sm">
-                        {provider.price_range || '$$$'}
-                      </p>
-                      <p className="text-xs text-gray-500">{t('providers.price')}</p>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600 flex items-center gap-1">
+                        <Clock className="w-3 h-3" /> Respuesta
+                      </span>
+                      <span className="text-gray-900">
+                        {provider.response_time || '30min'}
+                      </span>
                     </div>
                   </div>
 
-                  {/* Experience badges */}
-                  <div className="flex gap-2 mb-4 flex-wrap">
-                    <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-medium">
-                      {provider.experience || 8}+ {t('providers.years')} exp
-                    </span>
-                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">
-                      {t('providers.verified')}
-                    </span>
-                    {i < 3 && (
-                      <span className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-medium">
-                        Top 10
+                  {/* Verification Badge */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-1 text-green-600">
+                      <Shield className="w-4 h-4" />
+                      <span className="text-sm font-medium">Verificado</span>
+                    </div>
+                    {provider.experience && (
+                      <span className="text-sm text-gray-600">
+                        {provider.experience}+ años exp
                       </span>
                     )}
                   </div>
 
-                  {/* Action Buttons */}
+                  {/* Actions */}
                   <div className="flex gap-2">
                     <Link href={`/providers/${provider.id || i}`} className="flex-1">
-                      <button className="w-full bg-black text-white py-3 rounded-xl font-semibold hover:bg-gray-800 transition-all">
-                        {t('providers.view.profile')}
+                      <button className="w-full bg-purple-600 text-white py-2.5 rounded-xl font-semibold hover:bg-purple-700 transition-all">
+                        Ver Perfil
                       </button>
                     </Link>
-                    <button className="bg-purple-100 text-purple-600 px-4 py-3 rounded-xl font-semibold hover:bg-purple-200 transition-all">
-                      💬
+                    <button 
+                      onClick={(e) => {
+                        e.preventDefault()
+                        setSelectedProvider(provider)
+                        setShowBookingModal(true)
+                      }}
+                      className="bg-purple-100 text-purple-600 px-4 py-2.5 rounded-xl font-semibold hover:bg-purple-200 transition-all"
+                      title="Agendar cita"
+                    >
+                      <Calendar className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
@@ -395,7 +438,6 @@ export default function TranslatedProvidersPage({ providers }: TranslatedProvide
                 <p className="text-gray-600">{t('providers.try.different')}</p>
                 <button 
                   onClick={() => {
-                    setSearchTerm('')
                     setSelectedLocation('')
                     setSelectedService('')
                   }}
@@ -448,6 +490,18 @@ export default function TranslatedProvidersPage({ providers }: TranslatedProvide
           </div>
         </div>
       </section>
+
+      {/* Booking Modal */}
+      {selectedProvider && (
+        <BookingModal 
+          isOpen={showBookingModal}
+          onClose={() => {
+            setShowBookingModal(false)
+            setSelectedProvider(null)
+          }}
+          provider={selectedProvider}
+        />
+      )}
     </div>
   )
 }
