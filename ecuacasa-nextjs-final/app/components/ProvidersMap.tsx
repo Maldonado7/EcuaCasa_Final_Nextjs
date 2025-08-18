@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { Wrapper } from '@googlemaps/react-wrapper'
+import { CUENCA_LOCATIONS, getLocationCoordinates } from '../lib/ecuadorLocations'
 
 interface Provider {
   id: string
@@ -26,28 +27,17 @@ function MapComponent({ providers, onProviderSelect }: ProvidersMapProps) {
   // Cuenca coordinates
   const cuencaCenter = { lat: -2.9005, lng: -79.0067 }
 
-  // Sample provider coordinates with better spacing to avoid overlap
+  // Get real provider coordinates using Ecuador locations data
   const getProviderCoordinates = (location: string, index: number = 0) => {
-    const coordinates: { [key: string]: { lat: number; lng: number } } = {
-      'el centro': { lat: -2.9005, lng: -79.0067 },
-      'san joaquín': { lat: -2.8920, lng: -79.0040 },
-      'yanuncay': { lat: -2.9080, lng: -79.0120 },
-      'san sebastián': { lat: -2.9100, lng: -79.0010 },
-      'totoracocha': { lat: -2.8850, lng: -79.0150 },
-      'monay': { lat: -2.9150, lng: -78.9950 },
-      'el batán': { lat: -2.8800, lng: -79.0200 },
-      'ricaurte': { lat: -2.9200, lng: -78.9900 },
-      'quito norte': { lat: -0.1807, lng: -78.4678 },
-      'guayaquil centro': { lat: -2.1894, lng: -79.8890 },
-      'ambato centro': { lat: -1.2394, lng: -78.6269 },
-      'loja centro': { lat: -3.9956, lng: -79.2042 }
-    }
+    // Try to get coordinates from our real data
+    const realCoords = getLocationCoordinates(location)
     
-    const locationKey = location.toLowerCase().replace('cuenca ', '')
-    let coords = coordinates[locationKey] || cuencaCenter
+    let coords = realCoords 
+      ? { lat: realCoords.lat, lng: realCoords.lng }
+      : cuencaCenter // Fallback to Cuenca center
     
-    // Add small random offset to prevent exact overlap
-    const offset = 0.002
+    // Add small offset to prevent exact overlap when multiple providers in same area
+    const offset = 0.001
     coords = {
       lat: coords.lat + (Math.random() - 0.5) * offset,
       lng: coords.lng + (Math.random() - 0.5) * offset

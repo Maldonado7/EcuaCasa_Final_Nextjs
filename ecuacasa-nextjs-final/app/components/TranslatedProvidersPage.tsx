@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useTranslation } from '../context/TranslationContext'
 import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs'
+import AccountDropdown from './AccountDropdown'
 import CombinedLocationSelector from './CombinedLocationSelector'
 import ServiceSelector from './ServiceSelector'
 import LanguageToggle from './LanguageToggle'
@@ -26,6 +27,27 @@ export default function TranslatedProvidersPage({ providers }: TranslatedProvide
   const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid')
   const [showBookingModal, setShowBookingModal] = useState(false)
   const [selectedProvider, setSelectedProvider] = useState<any>(null)
+  const [userHasProviderProfile, setUserHasProviderProfile] = useState(false)
+
+  // Check if current user already has a provider profile
+  useEffect(() => {
+    const checkUserProviderStatus = async () => {
+      if (isSignedIn && user) {
+        try {
+          const response = await fetch('/api/providers/register')
+          if (response.ok) {
+            const data = await response.json()
+            // If user has a provider profile, hide the CTA
+            setUserHasProviderProfile(!!data.provider)
+          }
+        } catch (error) {
+          console.error('Error checking provider status:', error)
+        }
+      }
+    }
+    
+    checkUserProviderStatus()
+  }, [isSignedIn, user])
 
   // Initialize search state from URL parameters
   useEffect(() => {
@@ -164,41 +186,42 @@ export default function TranslatedProvidersPage({ providers }: TranslatedProvide
 
             <div className="flex items-center gap-4">
               <LanguageToggle />
+              
+              {/* SOY PROFESIONAL Button - Always visible */}
+              <Link href="/providers/register">
+                <button className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-4 py-2.5 rounded-full font-bold text-sm hover:shadow-lg transition-all">
+                  {t('nav.professional')}
+                </button>
+              </Link>
+
+              {/* Account Section */}
               {isSignedIn ? (
-                <>
-                  <Link href="/dashboard">
-                    <button className="text-gray-700 hover:text-purple-600 font-medium transition-all">
-                      Mi Dashboard
-                    </button>
-                  </Link>
-                  <Link href="/providers/register">
-                    <button className="border border-purple-600 text-purple-600 px-6 py-2.5 rounded-full font-semibold hover:bg-purple-50 transition-all">
-                      {t('nav.professional')}
-                    </button>
-                  </Link>
-                  <UserButton 
-                    appearance={{
-                      elements: {
-                        avatarBox: 'w-10 h-10'
-                      }
-                    }}
-                    userProfileMode="navigation"
-                    userProfileUrl="/dashboard"
-                  />
-                </>
+                <UserButton 
+                  appearance={{
+                    elements: {
+                      avatarBox: 'w-10 h-10'
+                    }
+                  }}
+                  afterSignOutUrl="/"
+                >
+                  <UserButton.MenuItems>
+                    <UserButton.Link
+                      label="Mi Perfil Profesional"
+                      labelIcon={<span>💼</span>}
+                      href="/my-provider-profile"
+                    />
+                    {/* Admin access for specific users */}
+                    {user?.emailAddresses[0]?.emailAddress === 'ecuacasa.app@gmail.com' && (
+                      <UserButton.Link
+                        label="Panel Admin"
+                        labelIcon={<span>⚙️</span>}
+                        href="/admin"
+                      />
+                    )}
+                  </UserButton.MenuItems>
+                </UserButton>
               ) : (
-                <>
-                  <SignInButton mode="modal">
-                    <button className="border border-purple-600 text-purple-600 px-6 py-2.5 rounded-full font-semibold hover:bg-purple-50 transition-all">
-                      Iniciar Sesión
-                    </button>
-                  </SignInButton>
-                  <Link href="/sign-up-role">
-                    <button className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2.5 rounded-full font-semibold hover:shadow-lg transition-all">
-                      Crear Cuenta
-                    </button>
-                  </Link>
-                </>
+                <AccountDropdown />
               )}
             </div>
           </div>
@@ -372,7 +395,7 @@ export default function TranslatedProvidersPage({ providers }: TranslatedProvide
                   <div className="bg-gray-50 rounded-xl p-3 space-y-2 mb-5">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-600 flex items-center gap-1">
-                        <DollarSign className="w-3 h-3" /> Precio
+                        <DollarSign className="w-3 h-3" /> {t('card.price')}
                       </span>
                       <span className="font-semibold text-purple-700">
                         {provider.price_range || '$25-45/hora'}
@@ -380,7 +403,7 @@ export default function TranslatedProvidersPage({ providers }: TranslatedProvide
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-600 flex items-center gap-1">
-                        <MapPin className="w-3 h-3" /> Ubicación
+                        <MapPin className="w-3 h-3" /> {t('card.location')}
                       </span>
                       <span className="text-gray-900">
                         {provider.location || 'Cuenca Centro'}
@@ -388,7 +411,7 @@ export default function TranslatedProvidersPage({ providers }: TranslatedProvide
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-600 flex items-center gap-1">
-                        <Clock className="w-3 h-3" /> Respuesta
+                        <Clock className="w-3 h-3" /> {t('card.response')}
                       </span>
                       <span className="text-gray-900">
                         {provider.response_time || '30min'}
@@ -400,7 +423,7 @@ export default function TranslatedProvidersPage({ providers }: TranslatedProvide
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-1 text-green-600">
                       <Shield className="w-4 h-4" />
-                      <span className="text-sm font-medium">Verificado</span>
+                      <span className="text-sm font-medium">{t('card.verified')}</span>
                     </div>
                     {provider.experience && (
                       <span className="text-sm text-gray-600">
@@ -413,7 +436,7 @@ export default function TranslatedProvidersPage({ providers }: TranslatedProvide
                   <div className="flex gap-2">
                     <Link href={`/providers/${provider.id || i}`} className="flex-1">
                       <button className="w-full bg-purple-600 text-white py-2.5 rounded-xl font-semibold hover:bg-purple-700 transition-all">
-                        Ver Perfil
+                        {t('card.view.profile')}
                       </button>
                     </Link>
                     <button 
@@ -423,7 +446,7 @@ export default function TranslatedProvidersPage({ providers }: TranslatedProvide
                         setShowBookingModal(true)
                       }}
                       className="bg-purple-100 text-purple-600 px-4 py-2.5 rounded-xl font-semibold hover:bg-purple-200 transition-all"
-                      title="Agendar cita"
+                      title={t('card.schedule.appointment')}
                     >
                       <Calendar className="w-4 h-4" />
                     </button>
@@ -466,7 +489,8 @@ export default function TranslatedProvidersPage({ providers }: TranslatedProvide
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA Section - Only show to users who don't have provider profiles */}
+      {(!isSignedIn || !userHasProviderProfile) && (
       <section className="py-16 bg-gradient-to-br from-purple-600 via-purple-700 to-pink-600 relative overflow-hidden">
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="relative max-w-4xl mx-auto text-center px-4">
@@ -490,7 +514,7 @@ export default function TranslatedProvidersPage({ providers }: TranslatedProvide
           </div>
         </div>
       </section>
-
+      )}
       {/* Booking Modal */}
       {selectedProvider && (
         <BookingModal 

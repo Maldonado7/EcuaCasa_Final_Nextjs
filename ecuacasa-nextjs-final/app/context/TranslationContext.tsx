@@ -136,6 +136,98 @@ const translations: Translations = {
   // Trade Search
   'providers.search.by.trade': { es: 'Buscar por oficio', en: 'Search by trade' },
   'providers.search.popular.trades': { es: 'Oficios más solicitados en Ecuador', en: 'Most requested trades in Ecuador' },
+
+  // Card Labels
+  'card.price': { es: 'Precio', en: 'Price' },
+  'card.location': { es: 'Ubicación', en: 'Location' },
+  'card.response': { es: 'Respuesta', en: 'Response' },
+  'card.verified': { es: 'Verificado', en: 'Verified' },
+  'card.view.profile': { es: 'Ver Perfil', en: 'View Profile' },
+  'card.schedule': { es: 'Agendar', en: 'Schedule' },
+  'card.rating': { es: 'Calificación', en: 'Rating' },
+  'card.schedule.appointment': { es: 'Agendar cita', en: 'Schedule appointment' },
+  'card.quick.response': { es: 'Respuesta rápida', en: 'Quick response' },
+
+  // Booking Modal
+  'booking.title': { es: 'Agendar Cita', en: 'Schedule Appointment' },
+  'booking.work.location': { es: 'Ubicación del Trabajo', en: 'Work Location' },
+
+  // Admin Panel
+  'admin.title': { es: 'Panel de Administración', en: 'Administration Panel' },
+  'admin.overview': { es: 'Panel General', en: 'Overview' },
+  'admin.providers': { es: 'Proveedores', en: 'Providers' },
+  'admin.bookings': { es: 'Reservas', en: 'Bookings' },
+  'admin.users': { es: 'Usuarios', en: 'Users' },
+  'admin.settings': { es: 'Configuración', en: 'Settings' },
+  'admin.stats.total.users': { es: 'Total Usuarios', en: 'Total Users' },
+  'admin.stats.providers': { es: 'Proveedores', en: 'Providers' },
+  'admin.stats.bookings': { es: 'Reservas', en: 'Bookings' },
+  'admin.pending.providers': { es: 'Proveedores Pendientes', en: 'Pending Providers' },
+  'admin.recent.bookings': { es: 'Reservas Recientes', en: 'Recent Bookings' },
+  'admin.approve': { es: 'Aprobar', en: 'Approve' },
+  'admin.reject': { es: 'Rechazar', en: 'Reject' },
+  'admin.no.pending': { es: 'No hay proveedores pendientes', en: 'No pending providers' },
+  'admin.no.bookings': { es: 'No hay reservas recientes', en: 'No recent bookings' },
+  'admin.all.reviewed': { es: 'Todos los proveedores han sido revisados', en: 'All providers have been reviewed' },
+  'admin.provider.management': { es: 'Gestión de Proveedores', en: 'Provider Management' },
+  'admin.booking.management': { es: 'Gestión de Reservas', en: 'Booking Management' },
+  'admin.user.management': { es: 'Gestión de Usuarios', en: 'User Management' },
+  'admin.platform.settings': { es: 'Configuración de la Plataforma', en: 'Platform Settings' },
+  'admin.development': { es: 'en desarrollo...', en: 'in development...' },
+
+  // Provider Pricing Management
+  'provider.pricing.title': { es: 'Gestión de Precios', en: 'Pricing Management' },
+  'provider.pricing.basePrice': { es: 'Precio Base', en: 'Base Price' },
+  'provider.pricing.unit': { es: 'Unidad de Precio', en: 'Price Unit' },
+  'provider.pricing.hourly': { es: 'Por Hora', en: 'Per Hour' },
+  'provider.pricing.fixed': { es: 'Precio Fijo', en: 'Fixed Price' },
+  'provider.pricing.perVisit': { es: 'Por Visita', en: 'Per Visit' },
+  'provider.pricing.emergencyMultiplier': { es: 'Multiplicador de Emergencia', en: 'Emergency Multiplier' },
+  'provider.pricing.minPrice': { es: 'Precio Mínimo', en: 'Minimum Price' },
+  'provider.pricing.maxPrice': { es: 'Precio Máximo', en: 'Maximum Price' },
+  'provider.pricing.earningsCalculator': { es: 'Calculadora de Ganancias', en: 'Earnings Calculator' },
+  'provider.pricing.regularService': { es: 'Servicio Regular', en: 'Regular Service' },
+  'provider.pricing.emergencyService': { es: 'Servicio de Emergencia', en: 'Emergency Service' },
+  'provider.pricing.customerPays': { es: 'Cliente Paga', en: 'Customer Pays' },
+  'provider.pricing.platformFee': { es: 'Comisión Plataforma', en: 'Platform Fee' },
+  'provider.pricing.paymentFee': { es: 'Comisión de Pago', en: 'Payment Fee' },
+  'provider.pricing.youReceive': { es: 'Usted Recibe', en: 'You Receive' },
+  'provider.pricing.savePricing': { es: 'Guardar Precios', en: 'Save Pricing' },
+  'provider.pricing.paymentOptions': { es: 'Opciones de Pago', en: 'Payment Options' },
+  'provider.pricing.payphoneInfo': { es: 'Integración completa con tarjetas (5% + IVA)', en: 'Full integration with cards (5% + VAT)' },
+  'provider.pricing.whatsappInfo': { es: 'Enlaces directos de pago por WhatsApp', en: 'Direct WhatsApp payment links' },
+  'provider.pricing.cashInfo': { es: 'Pago en efectivo al momento del servicio', en: 'Cash payment at service time' },
+
+  // Dashboard Settings
+  'dashboard.security.title': { es: 'Seguridad de la Cuenta', en: 'Account Security' },
+  'dashboard.security.profile.config': { es: 'Configuración de Perfil', en: 'Profile Settings' },
+  'dashboard.security.profile.description': { es: 'Cambiar contraseña, email, y configuración de seguridad', en: 'Change password, email, and security settings' },
+  'dashboard.notifications.title': { es: 'Notificaciones', en: 'Notifications' },
+  'dashboard.notifications.bookings': { es: 'Nuevas reservas por email', en: 'New bookings by email' },
+  'dashboard.notifications.reminders': { es: 'Recordatorios de citas', en: 'Appointment reminders' },
+  'dashboard.notifications.offers': { es: 'Ofertas y promociones', en: 'Offers and promotions' },
+
+  // Payment Methods
+  'payment.methods.title': { es: 'Métodos de Pago', en: 'Payment Methods' },
+  'payment.payphone.title': { es: 'Pagar con Payphone', en: 'Pay with Payphone' },
+  'payment.whatsapp.title': { es: 'Pagar por WhatsApp', en: 'Pay via WhatsApp' },
+  'payment.cash.title': { es: 'Pago en Efectivo', en: 'Cash Payment' },
+  'payment.breakdown.title': { es: 'Desglose del Pago', en: 'Payment Breakdown' },
+  'payment.service.cost': { es: 'Costo del Servicio', en: 'Service Cost' },
+  'payment.platform.fee': { es: 'Comisión de Plataforma', en: 'Platform Fee' },
+  'payment.processing.fee': { es: 'Comisión de Procesamiento', en: 'Processing Fee' },
+  'payment.total': { es: 'Total a Pagar', en: 'Total to Pay' },
+  'payment.whatsapp.generate': { es: 'Generar Link de WhatsApp', en: 'Generate WhatsApp Link' },
+  'payment.whatsapp.instructions': { es: 'Se enviará un enlace de pago directo al proveedor', en: 'A direct payment link will be sent to the provider' },
+
+  // Account Dropdown
+  'nav.account': { es: 'Cuenta', en: 'Account' },
+  'nav.signin': { es: 'Iniciar Sesión', en: 'Sign In' },
+  'nav.signin.subtitle': { es: 'Accede a tu cuenta existente', en: 'Access your existing account' },
+  'nav.signup': { es: 'Crear Cuenta', en: 'Sign Up' },
+  'nav.signup.subtitle': { es: 'Regístrate gratis en EcuaCasa', en: 'Register for free on EcuaCasa' },
+  'nav.account.footer': { es: 'Rápido y seguro con Clerk', en: 'Fast and secure with Clerk' },
+  'nav.professional': { es: 'SOY PROFESIONAL', en: 'I AM A PROFESSIONAL' },
 }
 
 interface TranslationContextType {

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from '../context/TranslationContext'
 import LanguageToggle from './LanguageToggle'
 import BookingModal from './BookingModal'
+import { useUser, UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
 import { ArrowLeft, Star, Shield, Clock, MapPin, Phone, MessageCircle, Calendar, Award, CheckCircle, Users, DollarSign, Wrench, Camera, Heart } from 'lucide-react'
 
@@ -13,70 +14,52 @@ interface TranslatedProviderDetailPageProps {
 
 export default function TranslatedProviderDetailPage({ providerId }: TranslatedProviderDetailPageProps) {
   const { t } = useTranslation()
+  const { isSignedIn, user } = useUser()
   const [provider, setProvider] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('overview')
   const [showBookingModal, setShowBookingModal] = useState(false)
 
-  // Mock provider data - in real app this would fetch from API
+  // Fetch provider data from API
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      const mockProvider = {
-        id: providerId,
-        name: 'Miguel Rodriguez',
-        service_type: 'Plomero Master',
-        location: 'El Centro',
-        rating: 4.9,
-        reviews: 127,
-        response_time: '15min',
-        price_range: '$25-45/hora',
-        experience: 12,
-        phone: '+593 99 123 4567',
-        verified: true,
-        description: 'Especialista en plomería residencial y comercial con más de 12 años de experiencia. Certificado en instalaciones de gas y sistemas de calefacción. Disponible 24/7 para emergencias.',
-        services: [
-          'Reparación de tuberías',
-          'Instalación de grifos',
-          'Destapado de cañerías',
-          'Instalación de calentadores',
-          'Reparación de inodoros',
-          'Sistemas de riego'
-        ],
-        portfolio: [
-          'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400',
-          'https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?w=400',
-          'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=400',
-          'https://images.unsplash.com/photo-1572098240819-7a67d4da10a8?w=400'
-        ],
-        recent_reviews: [
-          {
-            name: 'Ana Morales',
-            rating: 5,
-            comment: 'Excelente trabajo, muy profesional y puntual. Solucionó el problema rápidamente.',
-            date: '2 días atrás'
-          },
-          {
-            name: 'Carlos Vega',
-            rating: 5,
-            comment: 'Miguel es muy confiable. Ya lo he contratado 3 veces y siempre perfecto.',
-            date: '1 semana atrás'
-          },
-          {
-            name: 'María López',
-            rating: 4,
-            comment: 'Buen trabajo y precio justo. Lo recomiendo.',
-            date: '2 semanas atrás'
-          }
-        ],
-        availability: 'Lun-Dom 7:00-22:00',
-        emergency_available: true,
-        insurance: true,
-        warranty: '30 días'
+    const fetchProvider = async () => {
+      try {
+        const response = await fetch(`/api/providers/${providerId}`)
+        if (response.ok) {
+          const data = await response.json()
+          // Enrich data with default values
+          setProvider({
+            ...data,
+            reviews: data.reviews || 0,
+            response_time: data.response_time || '30min',
+            price_range: data.price_range || '$25-45/hora',
+            experience: data.experience || 5,
+            services: [
+              'Servicio profesional garantizado',
+              'Atención personalizada',
+              'Presupuesto sin compromiso'
+            ],
+            portfolio: [],
+            recent_reviews: [],
+            availability: 'Lun-Dom 7:00-22:00',
+            emergency_available: false,
+            insurance: true,
+            warranty: '30 días'
+          })
+        } else {
+          setProvider(null)
+        }
+      } catch (error) {
+        console.error('Error fetching provider:', error)
+        console.error('Provider ID:', providerId)
+        console.error('Response status:', response?.status)
+        setProvider(null)
+      } finally {
+        setLoading(false)
       }
-      setProvider(mockProvider)
-      setLoading(false)
-    }, 500)
+    }
+    
+    fetchProvider()
   }, [providerId])
 
   const handleWhatsAppContact = () => {
@@ -141,16 +124,45 @@ export default function TranslatedProviderDetailPage({ providerId }: TranslatedP
 
             <div className="flex items-center gap-4">
               <LanguageToggle />
-              <Link href="/providers/register">
-                <button className="border border-purple-600 text-purple-600 px-6 py-2.5 rounded-full font-semibold hover:bg-purple-50 transition-all">
-                  {t('nav.professional')}
-                </button>
-              </Link>
-              <Link href="/sign-up">
-                <button className="bg-black text-white px-6 py-2.5 rounded-full font-semibold hover:bg-gray-800 transition-all">
-                  {t('nav.start')}
-                </button>
-              </Link>
+              
+              {!isSignedIn ? (
+                <>
+                  <Link href="/providers/register">
+                    <button className="border border-purple-600 text-purple-600 px-6 py-2.5 rounded-full font-semibold hover:bg-purple-50 transition-all">
+                      {t('nav.professional')}
+                    </button>
+                  </Link>
+                  <Link href="/sign-up">
+                    <button className="bg-black text-white px-6 py-2.5 rounded-full font-semibold hover:bg-gray-800 transition-all">
+                      {t('nav.start')}
+                    </button>
+                  </Link>
+                </>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <Link href="/providers/register">
+                    <button className="border border-purple-600 text-purple-600 px-4 py-2 rounded-full text-sm font-medium hover:bg-purple-50 transition-all">
+                      {t('nav.professional')}
+                    </button>
+                  </Link>
+                  <UserButton 
+                    appearance={{
+                      elements: {
+                        avatarBox: "w-8 h-8",
+                        userButtonPopoverCard: "shadow-2xl border border-gray-200",
+                        userButtonPopoverActions: "bg-white"
+                      }
+                    }}
+                    userProfileProps={{
+                      appearance: {
+                        elements: {
+                          card: "shadow-2xl"
+                        }
+                      }
+                    }}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -27,6 +27,7 @@ export default function SearchAutocomplete({ placeholder, onServiceSelect }: Sea
   const { t } = useTranslation()
   const inputRef = useRef<HTMLInputElement>(null)
   const suggestionsRef = useRef<HTMLDivElement>(null)
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // Fetch services from Supabase
   useEffect(() => {
@@ -49,6 +50,15 @@ export default function SearchAutocomplete({ placeholder, onServiceSelect }: Sea
     }
 
     fetchServices()
+  }, [])
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+    }
   }, [])
 
   // Filter suggestions based on search term
@@ -117,8 +127,13 @@ export default function SearchAutocomplete({ placeholder, onServiceSelect }: Sea
   }
 
   const handleBlur = () => {
+    // Clear any existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+    
     // Delay hiding suggestions to allow for clicks
-    setTimeout(() => {
+    timeoutRef.current = setTimeout(() => {
       setShowSuggestions(false)
       setActiveSuggestion(-1)
     }, 200)

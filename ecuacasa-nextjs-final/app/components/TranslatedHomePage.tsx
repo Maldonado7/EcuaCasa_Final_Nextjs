@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { useTranslation } from '../context/TranslationContext'
-import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs'
+import { UserButton, useUser } from '@clerk/nextjs'
 import CombinedLocationSelector from './CombinedLocationSelector'
 import ServiceSelector from './ServiceSelector'
 import LanguageToggle from './LanguageToggle'
+import AccountDropdown from './AccountDropdown'
 import Link from 'next/link'
 import { Search, Star, Shield, Users, TrendingUp, ArrowRight, Clock, DollarSign, Calendar } from 'lucide-react'
 
@@ -20,19 +21,52 @@ export default function TranslatedHomePage({ providers, services, stats }: Trans
   const { isSignedIn, user } = useUser()
   const [selectedLocation, setSelectedLocation] = useState('cuenca')
   const [selectedService, setSelectedService] = useState('')
+  const [currentUserProviderId, setCurrentUserProviderId] = useState<string | null>(null)
+  const [userHasProviderProfile, setUserHasProviderProfile] = useState(false)
+  
+  // Fetch current user's provider profile if they are signed in
+  useEffect(() => {
+    const fetchUserProvider = async () => {
+      if (isSignedIn && user) {
+        try {
+          const response = await fetch('/api/providers/register')
+          const data = await response.json()
+          if (data.hasProfile && data.provider) {
+            setCurrentUserProviderId(data.provider.id)
+            setUserHasProviderProfile(true)
+          }
+        } catch (error) {
+          console.error('Error fetching user provider:', error)
+        }
+      } else {
+        // Clear provider state when user is not signed in
+        setCurrentUserProviderId(null)
+        setUserHasProviderProfile(false)
+      }
+    }
+    fetchUserProvider()
+  }, [isSignedIn, user])
 
   // Keep only Cuenca providers for SEO (homepage featured section)
-  const cuencaProviders = providers.filter(provider => 
-    provider.location?.toLowerCase().includes('cuenca') ||
-    provider.location?.toLowerCase().includes('el centro') ||
-    provider.location?.toLowerCase().includes('san joaquín') ||
-    provider.location?.toLowerCase().includes('yanuncay') ||
-    provider.location?.toLowerCase().includes('san sebastián') ||
-    provider.location?.toLowerCase().includes('totoracocha') ||
-    provider.location?.toLowerCase().includes('monay') ||
-    provider.location?.toLowerCase().includes('el batán') ||
-    provider.location?.toLowerCase().includes('ricaurte')
-  ).slice(0, 6) // Show only 6 Cuenca providers (2 rows of 3)
+  const cuencaProviders = providers.filter(provider => {
+    // Filter by Cuenca locations
+    const isInCuenca = provider.location?.toLowerCase().includes('cuenca') ||
+      provider.location?.toLowerCase().includes('el centro') ||
+      provider.location?.toLowerCase().includes('san joaquín') ||
+      provider.location?.toLowerCase().includes('yanuncay') ||
+      provider.location?.toLowerCase().includes('san sebastián') ||
+      provider.location?.toLowerCase().includes('totoracocha') ||
+      provider.location?.toLowerCase().includes('monay') ||
+      provider.location?.toLowerCase().includes('el batán') ||
+      provider.location?.toLowerCase().includes('ricaurte')
+    
+    // If user is signed out, don't show their own provider card
+    if (!isSignedIn && currentUserProviderId && provider.id === currentUserProviderId) {
+      return false
+    }
+    
+    return isInCuenca
+  }).slice(0, 6) // Show only 6 Cuenca providers (2 rows of 3)
 
   const handleLocationChange = (location: string) => {
     setSelectedLocation(location)
@@ -77,36 +111,42 @@ export default function TranslatedHomePage({ providers, services, stats }: Trans
 
             <div className="flex items-center gap-4">
               <LanguageToggle />
+              
+              {/* SOY PROFESIONAL Button - Always visible */}
+              <Link href="/providers/register">
+                <button className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-4 py-2.5 rounded-full font-bold text-sm hover:shadow-lg transition-all">
+                  {t('nav.professional')}
+                </button>
+              </Link>
+
+              {/* Account Section */}
               {isSignedIn ? (
-                <>
-                  <Link href="/dashboard">
-                    <button className="text-gray-700 hover:text-purple-600 font-medium transition-all">
-                      Mi Dashboard
-                    </button>
-                  </Link>
-                  <UserButton 
-                    appearance={{
-                      elements: {
-                        avatarBox: 'w-10 h-10'
-                      }
-                    }}
-                    userProfileMode="navigation"
-                    userProfileUrl="/dashboard"
-                  />
-                </>
+                <UserButton 
+                  appearance={{
+                    elements: {
+                      avatarBox: 'w-10 h-10'
+                    }
+                  }}
+                  afterSignOutUrl="/"
+                >
+                  <UserButton.MenuItems>
+                    <UserButton.Link
+                      label="Mi Perfil Profesional"
+                      labelIcon={<span>💼</span>}
+                      href="/my-provider-profile"
+                    />
+                    {/* Admin access for specific users */}
+                    {user?.emailAddresses[0]?.emailAddress === 'ecuacasa.app@gmail.com' && (
+                      <UserButton.Link
+                        label="Panel Admin"
+                        labelIcon={<span>⚙️</span>}
+                        href="/admin"
+                      />
+                    )}
+                  </UserButton.MenuItems>
+                </UserButton>
               ) : (
-                <>
-                  <SignInButton mode="modal">
-                    <button className="border border-purple-600 text-purple-600 px-6 py-2.5 rounded-full font-semibold hover:bg-purple-50 transition-all">
-                      Iniciar Sesión
-                    </button>
-                  </SignInButton>
-                  <Link href="/sign-up-role">
-                    <button className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2.5 rounded-full font-semibold hover:shadow-lg transition-all">
-                      Crear Cuenta
-                    </button>
-                  </Link>
-                </>
+                <AccountDropdown />
               )}
             </div>
           </div>
@@ -263,8 +303,15 @@ export default function TranslatedHomePage({ providers, services, stats }: Trans
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {cuencaProviders.map((provider, i) => (
-              <Link key={provider.id} href={`/providers/${i}`} className="group">
-                <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-200 hover:shadow-xl hover:border-purple-300 transition-all h-full">
+              <Link key={provider.id} href={`/providers/${provider.id}`} className="group">
+                <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-200 hover:shadow-xl hover:border-purple-300 transition-all h-full relative">
+                  {/* "Tu perfil" Badge if this is the current user's provider profile */}
+                  {currentUserProviderId && provider.id === currentUserProviderId && (
+                    <div className="absolute top-3 right-3 bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded-full font-medium">
+                      Tu perfil
+                    </div>
+                  )}
+                  
                   {/* Simple Header */}
                   <div className="flex items-start gap-4 mb-4">
                     <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
@@ -301,19 +348,19 @@ export default function TranslatedHomePage({ providers, services, stats }: Trans
                   {/* Key Info - Only 3 items */}
                   <div className="space-y-2 mb-4">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Precio</span>
+                      <span className="text-gray-600">{t('card.price')}</span>
                       <span className="font-semibold text-gray-900">
                         {provider.price_range || '$25-45/hora'}
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Ubicación</span>
+                      <span className="text-gray-600">{t('card.location')}</span>
                       <span className="text-gray-900">
                         {provider.location || 'El Centro'}
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Respuesta</span>
+                      <span className="text-gray-600">{t('card.response')}</span>
                       <span className="text-gray-900">
                         {provider.response_time || '30min'}
                       </span>
@@ -324,7 +371,7 @@ export default function TranslatedHomePage({ providers, services, stats }: Trans
                   {provider.verified !== false && (
                     <div className="flex items-center gap-1 text-green-600 text-sm">
                       <Shield className="w-4 h-4" />
-                      <span className="font-medium">Verificado</span>
+                      <span className="font-medium">{t('card.verified')}</span>
                     </div>
                   )}
                 </div>
@@ -334,7 +381,8 @@ export default function TranslatedHomePage({ providers, services, stats }: Trans
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA Section - Only show to users who don't have provider profiles */}
+      {(!isSignedIn || !userHasProviderProfile) && (
       <section className="py-20 bg-gradient-to-br from-purple-600 via-purple-700 to-pink-600 relative overflow-hidden">
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="relative max-w-4xl mx-auto text-center px-4">
@@ -358,6 +406,7 @@ export default function TranslatedHomePage({ providers, services, stats }: Trans
           </div>
         </div>
       </section>
+      )}
     </div>
   )
 }

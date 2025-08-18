@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useUser } from '@clerk/nextjs'
+import { useTranslation } from '../context/TranslationContext'
 import { X, Calendar, Clock, MapPin, MessageCircle, User, Phone, Mail } from 'lucide-react'
 
 interface BookingModalProps {
@@ -17,7 +18,10 @@ interface BookingModalProps {
 
 export default function BookingModal({ isOpen, onClose, provider }: BookingModalProps) {
   const { user } = useUser()
+  const { t } = useTranslation()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [currentStep, setCurrentStep] = useState<'booking' | 'payment' | 'success'>('booking')
+  const [paymentData, setPaymentData] = useState<any>(null)
   const [formData, setFormData] = useState({
     clientName: '',
     clientPhone: '',
@@ -28,7 +32,8 @@ export default function BookingModal({ isOpen, onClose, provider }: BookingModal
     sector: '',
     description: '',
     estimatedCost: '',
-    shareLocationViaWhatsApp: true
+    shareLocationViaWhatsApp: true,
+    paymentMethod: 'payphone' // Add payment method
   })
 
   // Reset service type when provider changes and pre-fill user data
@@ -87,37 +92,90 @@ export default function BookingModal({ isOpen, onClose, provider }: BookingModal
 
   const providerServices = getProviderServices()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleBookingSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
     
     try {
-      // Save booking to database if user is signed in
-      if (user) {
-        const bookingData = {
-          customerName: formData.clientName || user.firstName,
-          customerEmail: formData.clientEmail,
-          customerPhone: formData.clientPhone,
-          providerName: provider.name,
-          service: formData.serviceType,
-          date: formData.preferredDate,
-          time: formData.preferredTime,
-          timeLabel: timeOptions.find(t => t.value === formData.preferredTime)?.label,
-          location: formData.sector,
-          price: provider.price_range || 'Por confirmar',
-          description: formData.description,
-          estimatedCost: formData.estimatedCost
-        }
-
-        await fetch('/api/bookings', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(bookingData),
-        })
+      const bookingData = {
+        customerName: formData.clientName || user?.firstName,
+        customerEmail: formData.clientEmail,
+        customerPhone: formData.clientPhone,
+        providerName: provider.name,
+        service: formData.serviceType,
+        date: formData.preferredDate,
+        time: formData.preferredTime,
+        timeLabel: timeOptions.find(t => t.value === formData.preferredTime)?.label,
+        location: formData.sector,
+        price: provider.price_range || 'Por confirmar',
+        description: formData.description,
+        estimatedCost: formData.estimatedCost
       }
 
+      if (user && formData.estimatedCost && parseFloat(formData.estimatedCost) > 0) {
+        // Proceed to payment step
+        setCurrentStep('payment')
+        setPaymentData(bookingData)
+      } else {
+        // Save booking without payment (for quotes/consultations)
+        if (user) {
+          await fetch('/api/bookings', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(bookingData),
+          })
+        }
+        
+        // Continue with WhatsApp flow
+        await handleWhatsAppFlow(bookingData)
+      }
+    } catch (error) {
+      console.error('Booking error:', error)
+      alert('Error al procesar la reserva. Por favor intenta de nuevo.')
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  const handlePaymentSubmit = async () => {
+    if (!paymentData || !formData.estimatedCost) return
+    
+    setIsSubmitting(true)
+    try {
+      const response = await fetch('/api/payments/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          bookingData: paymentData,
+          amount: parseFloat(formData.estimatedCost),
+          isEmergency: formData.preferredTime === 'emergency'
+        }),
+      })
+
+      const payment = await response.json()
+      
+      if (payment.success) {
+        // Redirect to Payphone payment page
+        window.location.href = payment.paymentUrl
+      } else {
+        throw new Error('Payment creation failed')
+      }
+    } catch (error) {
+      console.error('Payment error:', error)
+      alert('Error al procesar el pago. Por favor intenta de nuevo.')
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  const handleWhatsAppFlow = async (bookingData: any) => {
+    setIsSubmitting(true);
+    
+    try {
       // Send confirmation email if user is signed in
       if (user && formData.clientEmail) {
         const emailData = {
@@ -161,19 +219,19 @@ ${formData.shareLocationViaWhatsApp ? '📍 Te enviaré la ubicación exacta por
 
       // Open WhatsApp with the message
       const phoneNumber = provider.phone?.replace(/[^\d]/g, '') || ''
-      const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`
+      const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
       
-      window.open(whatsappURL, '_blank')
-      onClose()
+      window.open(whatsappURL, '_blank');
+      onClose();
     } catch (error) {
-      console.error('Error sending confirmation email:', error)
+      console.error('Error sending confirmation email:', error);
       // Still proceed with WhatsApp even if email fails
-      const phoneNumber = provider.phone?.replace(/[^\d]/g, '') || ''
-      const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`
-      window.open(whatsappURL, '_blank')
-      onClose()
+      const phoneNumber = provider.phone?.replace(/[^\d]/g, '') || '';
+      const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+      window.open(whatsappURL, '_blank');
+      onClose();
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
   }
 
@@ -193,7 +251,7 @@ ${formData.shareLocationViaWhatsApp ? '📍 Te enviaré la ubicación exacta por
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex-1">
-            <h2 className="text-xl font-bold text-gray-900">Agendar Cita</h2>
+            <h2 className="text-xl font-bold text-gray-900">{t('booking.title')}</h2>
             <p className="text-sm text-gray-600 mb-1">Con {provider.name}</p>
             {provider.price_range && (
               <div className="flex items-center gap-2">
@@ -213,7 +271,7 @@ ${formData.shareLocationViaWhatsApp ? '📍 Te enviaré la ubicación exacta por
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleBookingSubmit} className="p-6 space-y-4">
           {/* Client Info */}
           <div className="space-y-4">
             <h3 className="font-semibold text-gray-900 flex items-center gap-2">
@@ -366,7 +424,7 @@ ${formData.shareLocationViaWhatsApp ? '📍 Te enviaré la ubicación exacta por
           <div className="space-y-4">
             <h3 className="font-semibold text-gray-900 flex items-center gap-2">
               <MapPin className="w-4 h-4" />
-              Ubicación del Trabajo
+              {t('booking.work.location')}
             </h3>
 
             <div>

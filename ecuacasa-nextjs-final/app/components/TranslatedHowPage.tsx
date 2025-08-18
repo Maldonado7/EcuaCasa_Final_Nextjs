@@ -2,6 +2,7 @@
 
 import { useTranslation } from '../context/TranslationContext'
 import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs'
+import AccountDropdown from './AccountDropdown'
 import LanguageToggle from './LanguageToggle'
 import Link from 'next/link'
 import { Search, UserCheck, Star, ArrowRight, Shield, Clock, DollarSign, CheckCircle } from 'lucide-react'
@@ -103,41 +104,42 @@ export default function TranslatedHowPage() {
 
             <div className="flex items-center gap-4">
               <LanguageToggle />
+              
+              {/* SOY PROFESIONAL Button - Always visible */}
+              <Link href="/providers/register">
+                <button className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-4 py-2.5 rounded-full font-bold text-sm hover:shadow-lg transition-all">
+                  {t('nav.professional')}
+                </button>
+              </Link>
+
+              {/* Account Section */}
               {isSignedIn ? (
-                <>
-                  <Link href="/dashboard">
-                    <button className="text-gray-700 hover:text-purple-600 font-medium transition-all">
-                      Mi Dashboard
-                    </button>
-                  </Link>
-                  <Link href="/providers/register">
-                    <button className="border border-purple-600 text-purple-600 px-6 py-2.5 rounded-full font-semibold hover:bg-purple-50 transition-all">
-                      {t('nav.professional')}
-                    </button>
-                  </Link>
-                  <UserButton 
-                    appearance={{
-                      elements: {
-                        avatarBox: 'w-10 h-10'
-                      }
-                    }}
-                    userProfileMode="navigation"
-                    userProfileUrl="/dashboard"
-                  />
-                </>
+                <UserButton 
+                  appearance={{
+                    elements: {
+                      avatarBox: 'w-10 h-10'
+                    }
+                  }}
+                  afterSignOutUrl="/"
+                >
+                  <UserButton.MenuItems>
+                    <UserButton.Link
+                      label="Mi Perfil Profesional"
+                      labelIcon={<span>💼</span>}
+                      href="/my-provider-profile"
+                    />
+                    {/* Admin access for specific users */}
+                    {user?.emailAddresses[0]?.emailAddress === 'ecuacasa.app@gmail.com' && (
+                      <UserButton.Link
+                        label="Panel Admin"
+                        labelIcon={<span>⚙️</span>}
+                        href="/admin"
+                      />
+                    )}
+                  </UserButton.MenuItems>
+                </UserButton>
               ) : (
-                <>
-                  <SignInButton mode="modal">
-                    <button className="border border-purple-600 text-purple-600 px-6 py-2.5 rounded-full font-semibold hover:bg-purple-50 transition-all">
-                      Iniciar Sesión
-                    </button>
-                  </SignInButton>
-                  <SignUpButton mode="modal">
-                    <button className="bg-black text-white px-6 py-2.5 rounded-full font-semibold hover:bg-gray-800 transition-all">
-                      {t('nav.start')}
-                    </button>
-                  </SignUpButton>
-                </>
+                <AccountDropdown />
               )}
             </div>
           </div>
