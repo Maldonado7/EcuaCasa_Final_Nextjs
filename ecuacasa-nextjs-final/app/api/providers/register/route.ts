@@ -21,124 +21,106 @@ export async function POST(request: Request) {
     }
 
     const providerData = await request.json()
+    console.log('Received comprehensive provider data:', JSON.stringify(providerData, null, 2))
 
-    // Validate required fields
-    if (!providerData.name || !providerData.service_type || !providerData.location) {
+    // Validate required fields - STRICT validation, no fallbacks
+    const requiredFields = ['name', 'service_type', 'phone', 'account_type', 'ruc_cedula']
+    const missingFields = requiredFields.filter(field => !providerData[field])
+    
+    if (missingFields.length > 0) {
       return NextResponse.json({ 
         error: 'Missing required fields',
-        required: ['name', 'service_type', 'location']
+        missing: missingFields
       }, { status: 400 })
     }
 
-    // Check if user_profiles table exists, if not, we'll skip user profile creation
-    console.log('Checking user profile for:', user.id, user.emailAddresses[0]?.emailAddress)
-    
-    let userId = null
-    
-    // Try to create/find user profile, but don't fail if table doesn't exist
-    try {
-      const { data: userProfile, error: userProfileError } = await supabaseAdmin
-        .from('user_profiles')
-        .upsert({
-          clerk_id: user.id,
-          email: user.emailAddresses[0]?.emailAddress,
-          first_name: user.firstName,
-          last_name: user.lastName,
-          role: 'provider'
-        }, {
-          onConflict: 'clerk_id'
-        })
-        .select()
-        .single()
-
-      if (userProfileError) {
-        console.log('User profile table may not exist:', userProfileError.message)
-        // If table doesn't exist (error code 42P01), continue without user_id
-        if (userProfileError.code === '42P01') {
-          console.log('user_profiles table does not exist, continuing without user_id')
-        } else {
-          console.error('User profile error:', userProfileError)
-        }
-      } else {
-        userId = userProfile?.id
-        console.log('User profile created/found:', userId)
-      }
-    } catch (err) {
-      console.log('Error with user_profiles table, continuing without user_id:', err.message)
+    // Validate business logic
+    if (providerData.payment_methods && providerData.payment_methods.length < 2) {
+      return NextResponse.json({ 
+        error: 'Must select at least 2 payment methods'
+      }, { status: 400 })
     }
 
-    // Check if user already has a provider profile (only if we have userId)
-    if (userId) {
-      const { data: existingProvider } = await supabaseAdmin
-        .from('providers')
-        .select('id')
-        .eq('user_id', userId)
-        .single()
-
-      if (existingProvider) {
-        return NextResponse.json({ 
-          error: 'User already has a provider profile'
-        }, { status: 400 })
-      }
+    if (!providerData.accept_terms) {
+      return NextResponse.json({ 
+        error: 'Must accept terms and conditions'
+      }, { status: 400 })
     }
 
-    // Create provider profile
-    const providerPayload: any = {
+    // Check if user already has a provider profile
+    const { data: existingProvider } = await supabaseAdmin
+      .from('providers')
+      .select('id')
+      .eq('user_id', user.id)
+      .single()
+
+    if (existingProvider) {
+      return NextResponse.json({ 
+        error: 'User already has a provider profile'
+      }, { status: 400 })
+    }
+
+    // Create comprehensive provider profile with ALL fields
+    const providerPayload = {
+      // Basic Information
+      user_id: user.id,
       name: providerData.name,
-      service_type: providerData.service_type,
-      description: providerData.description,
-      location: providerData.location,
+      email: providerData.email,
       phone: providerData.phone,
-      rating: 5.0,
-      verified: false,
-      type: providerData.type || 'individual',
-      profile_image_url: providerData.profile_image_url || null,
-      experience_years: providerData.experience_years ? parseInt(providerData.experience_years) : null,
-      certifications: providerData.certifications || null
+      account_type: providerData.account_type,
+      ruc_cedula: providerData.ruc_cedula,
+      
+      // Service Information
+      service_type: providerData.service_type,
+      experience_years: providerData.experience_years || 0,
+      description: providerData.description || '',
+      
+      // Pricing & Services
+      pricing_model: providerData.pricing_model || 'hourly',
+      hourly_rate: providerData.hourly_rate,
+      minimum_visit: providerData.minimum_visit,
+      free_estimate: providerData.free_estimate || false,
+      quote_fee: providerData.quote_fee,
+      payment_methods: providerData.payment_methods || [],
+      payment_conditions: providerData.payment_conditions || 'completion',
+      advance_threshold: providerData.advance_threshold,
+      guarantee_period: providerData.guarantee_period || 30,
+      has_insurance: providerData.has_insurance || false,
+      includes_materials: providerData.includes_materials || false,
+      offers_contract: providerData.offers_contract || false,
+      invoice_type: providerData.invoice_type || [],
+      service_list: providerData.service_list || [],
+      
+      // Availability & Coverage
+      schedule: providerData.schedule || {},
+      emergency_service: providerData.emergency_service || false,
+      emergency_response_time: providerData.emergency_response_time,
+      emergency_surcharge: providerData.emergency_surcharge,
+      coverage_zones: providerData.coverage_zones || [],
+      travel_cost: providerData.travel_cost || 'free',
+      fixed_travel_cost: providerData.fixed_travel_cost,
+      max_travel_distance: providerData.max_travel_distance || '15',
+      
+      // Verification & Gallery
+      profile_image_url: providerData.profile_image_url,
+      id_document_url: providerData.id_document_url,
+      certification_urls: providerData.certification_urls || [],
+      gallery_urls: providerData.gallery_urls || [],
+      accept_terms: providerData.accept_terms,
+      accept_marketing: providerData.accept_marketing || false,
+      
+      // System fields
+      rating: 0.0, // Start with 0, no inflated ratings
+      verified: false, // Must be verified by admin
+      status: providerData.status || 'pending_review',
+      location: providerData.coverage_zones?.join(', ') || '',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     }
 
-    // Try to create a user record first, then use that ID
-    let finalUserId = userId
-    
-    if (!userId) {
-      // Since we have complex foreign key constraints, let's try to find an existing user first
-      try {
-        // Try to find if any user exists we can reference
-        const { data: existingUsers, error: fetchError } = await supabaseAdmin
-          .from('users')
-          .select('id')
-          .limit(1)
+    console.log('Inserting provider with payload:', JSON.stringify(providerPayload, null, 2))
 
-        if (existingUsers && existingUsers.length > 0) {
-          finalUserId = existingUsers[0].id
-          console.log('Using existing user ID:', finalUserId)
-        } else {
-          // Create user with absolute minimal fields
-          const newUserId = crypto.randomUUID()
-          const { data: newUser, error: userError } = await supabaseAdmin
-            .from('users')
-            .insert({ id: newUserId })
-            .select()
-            .single()
-
-          if (userError) {
-            console.error('Error creating user:', userError)
-            // If everything fails, we need to fail the provider creation
-            throw new Error('Cannot create provider without valid user reference')
-          } else {
-            finalUserId = newUser.id
-            console.log('Created minimal user and using ID:', finalUserId)
-          }
-        }
-      } catch (err) {
-        console.error('Database constraint issues:', err.message)
-        throw new Error('Database configuration prevents provider registration')
-      }
-    }
-
-    // Always add user_id since it's required
-    providerPayload.user_id = finalUserId
-
+    // Insert provider - NO FALLBACKS, clean data only
     const { data: newProvider, error } = await supabaseAdmin
       .from('providers')
       .insert(providerPayload)
@@ -146,161 +128,44 @@ export async function POST(request: Request) {
       .single()
 
     if (error) {
-      console.error('Error creating provider:', error)
+      console.error('Provider creation error:', error)
+      
+      // Handle specific database errors
+      if (error.code === '23505') { // Unique constraint violation
+        return NextResponse.json({ 
+          error: 'Provider with this information already exists'
+        }, { status: 409 })
+      }
+      
+      if (error.code === '23503') { // Foreign key constraint violation
+        return NextResponse.json({ 
+          error: 'Invalid user reference - please contact support'
+        }, { status: 400 })
+      }
+      
       return NextResponse.json({ 
         error: 'Failed to create provider profile',
         details: error.message
       }, { status: 500 })
     }
 
-    // Save gallery images if provided
-    try {
-      const galleryImages = []
-      
-      // Add gallery images
-      if (providerData.gallery_images && providerData.gallery_images.length > 0) {
-        providerData.gallery_images.forEach((imageUrl: string) => {
-          galleryImages.push({
-            provider_user_id: user.id,
-            image_url: imageUrl,
-            image_type: 'work_sample',
-            uploaded_at: new Date().toISOString()
-          })
-        })
-      }
-
-      // Add before/after images
-      if (providerData.before_after_images && providerData.before_after_images.length > 0) {
-        providerData.before_after_images.forEach((imageUrl: string) => {
-          galleryImages.push({
-            provider_user_id: user.id,
-            image_url: imageUrl,
-            image_type: 'before_after',
-            uploaded_at: new Date().toISOString()
-          })
-        })
-      }
-
-      // Add certification documents
-      if (providerData.certification_documents && providerData.certification_documents.length > 0) {
-        providerData.certification_documents.forEach((imageUrl: string) => {
-          galleryImages.push({
-            provider_user_id: user.id,
-            image_url: imageUrl,
-            image_type: 'certification',
-            uploaded_at: new Date().toISOString()
-          })
-        })
-      }
-
-      // Save all gallery images
-      if (galleryImages.length > 0) {
-        const { error: galleryError } = await supabaseAdmin
-          .from('provider_gallery')
-          .insert(galleryImages)
-
-        if (galleryError) {
-          console.error('Error saving gallery images:', galleryError)
-          // Don't fail the entire registration, just log the error
-        } else {
-          console.log(`Saved ${galleryImages.length} gallery images for provider`)
-        }
-      }
-    } catch (galleryErr) {
-      console.error('Error processing gallery images:', galleryErr)
-      // Don't fail the registration
-    }
-
-    // Update user role in user_profiles if exists
-    if (userId) {
-      try {
-        await supabaseAdmin
-          .from('user_profiles')
-          .upsert({
-            clerk_id: user.id,
-            email: user.emailAddresses[0]?.emailAddress,
-            first_name: user.firstName,
-            last_name: user.lastName,
-            role: 'both', // Now they're both customer and professional
-            updated_at: new Date().toISOString()
-          }, {
-            onConflict: 'clerk_id'
-          })
-      } catch (err) {
-        console.log('Could not update user role, but provider was created successfully')
-      }
-    }
-
-    return NextResponse.json({ 
+    console.log('Provider created successfully:', newProvider.id)
+    
+    return NextResponse.json({
       success: true,
-      message: 'Provider profile created successfully',
-      provider: newProvider
+      provider: {
+        id: newProvider.id,
+        name: newProvider.name,
+        service_type: newProvider.service_type,
+        status: newProvider.status
+      }
     })
 
   } catch (error) {
     console.error('Registration error:', error)
     return NextResponse.json({ 
-      error: 'Internal server error'
-    }, { status: 500 })
-  }
-}
-
-export async function GET() {
-  try {
-    const user = await currentUser()
-    
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    // Try to get user_id from user_profiles (if table exists)
-    let userProfileId = null
-    try {
-      const { data: userProfile } = await supabaseAdmin
-        .from('user_profiles')
-        .select('id')
-        .eq('clerk_id', user.id)
-        .single()
-      
-      userProfileId = userProfile?.id
-    } catch (err) {
-      console.log('user_profiles table may not exist, checking providers without user_id filter')
-    }
-
-    // Get user's provider profile - try multiple approaches
-    let provider = null
-    let error = null
-
-    if (userProfileId) {
-      // If we have user profile, search by user_id
-      const result = await supabaseAdmin
-        .from('providers')
-        .select('*')
-        .eq('user_id', userProfileId)
-        .single()
-      provider = result.data
-      error = result.error
-    } 
-    
-    // No email-based fallback - only return exact matches
-
-    // No fallback - only return actual user's provider profile
-
-    if (error && error.code !== 'PGRST116') {
-      return NextResponse.json({ 
-        error: 'Failed to fetch provider profile'
-      }, { status: 500 })
-    }
-
-    return NextResponse.json({ 
-      hasProfile: !!provider,
-      provider: provider || null
-    })
-
-  } catch (error) {
-    console.error('Error:', error)
-    return NextResponse.json({ 
-      error: 'Internal server error'
+      error: 'Internal server error',
+      message: error.message
     }, { status: 500 })
   }
 }

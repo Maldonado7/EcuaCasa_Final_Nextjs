@@ -430,30 +430,56 @@ export default function EnhancedProviderRegistration() {
   const handleSubmit = async () => {
     setIsSubmitting(true)
     try {
-      // Prepare data for API
+      // Prepare comprehensive data for API - ALL FORM FIELDS, NO FALLBACKS
       const providerData = {
+        // Basic Information (Step 1)
         name: formData.name,
-        service_type: formData.category,
-        description: formData.description,
-        location: formData.coverageZones.join(', '),
+        email: user.emailAddresses[0]?.emailAddress,
         phone: formData.phone,
-        rating: 5.0,
-        verified: false,
-        type: formData.accountType,
-        experience_years: formData.experienceYears,
-        // Extended fields
         account_type: formData.accountType,
         ruc_cedula: formData.rucCedula,
+        
+        // Service Information
+        service_type: formData.category,
+        experience_years: formData.experienceYears,
+        description: formData.description,
+        
+        // Pricing & Services (Step 2)
         pricing_model: formData.pricingModel,
         hourly_rate: formData.hourlyRate,
         minimum_visit: formData.minimumVisit,
+        free_estimate: formData.freeEstimate,
+        quote_fee: formData.quoteFee,
+        payment_methods: formData.paymentMethods,
+        payment_conditions: formData.paymentConditions,
+        advance_threshold: formData.advanceThreshold,
         guarantee_period: formData.guaranteePeriod,
-        emergency_available: formData.emergencyService,
+        has_insurance: formData.hasInsurance,
+        includes_materials: formData.includesMaterials,
+        offers_contract: formData.offersContract,
+        invoice_type: formData.invoiceType,
+        service_list: formData.serviceList,
+        
+        // Availability & Coverage (Step 3)
+        schedule: formData.schedule,
+        emergency_service: formData.emergencyService,
+        emergency_response_time: formData.emergencyResponseTime,
         emergency_surcharge: formData.emergencySurcharge,
-        profile_image_url: formData.profileImage[0] || null,
-        gallery_images: formData.galleryImages,
-        certification_documents: formData.certificationDocs
+        coverage_zones: formData.coverageZones,
+        travel_cost: formData.travelCost,
+        fixed_travel_cost: formData.fixedTravelCost,
+        max_travel_distance: formData.maxTravelDistance,
+        
+        // Verification & Gallery (Step 4)
+        profile_image_url: formData.profileImageUrl,
+        id_document_url: formData.idDocumentUrl,
+        certification_urls: formData.certificationUrls,
+        gallery_urls: formData.galleryUrls,
+        accept_terms: formData.acceptTerms,
+        accept_marketing: formData.acceptMarketing
       }
+
+      console.log('Submitting provider data:', providerData)
 
       const response = await fetch('/api/providers/register', {
         method: 'POST',
@@ -461,14 +487,18 @@ export default function EnhancedProviderRegistration() {
         body: JSON.stringify(providerData)
       })
 
+      const result = await response.json()
+      
       if (response.ok) {
+        console.log('Registration successful:', result)
         setIsSuccess(true)
       } else {
-        throw new Error('Registration failed')
+        console.error('Registration failed:', result)
+        throw new Error(result.error || 'Registration failed')
       }
     } catch (error) {
       console.error('Registration error:', error)
-      alert('Error al registrarse. Por favor intenta de nuevo.')
+      alert(`Error al registrarse: ${error.message}. Por favor intenta de nuevo.`)
     } finally {
       setIsSubmitting(false)
     }
