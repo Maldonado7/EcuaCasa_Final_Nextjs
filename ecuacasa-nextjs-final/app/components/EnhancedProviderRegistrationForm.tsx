@@ -174,15 +174,17 @@ export default function EnhancedProviderRegistrationForm() {
             Para registrarte como profesional, primero debes crear una cuenta gratuita.
           </p>
           <div className="flex gap-4 justify-center">
-            <Link href="/sign-up">
-              <button className="bg-purple-600 text-white px-6 py-3 rounded-xl font-semibold">
-                Crear Cuenta
-              </button>
+            <Link 
+              href="/sign-up"
+              className="bg-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-purple-700 transition-colors"
+            >
+              Crear Cuenta
             </Link>
-            <Link href="/sign-in?redirect_url=/providers/register">
-              <button className="bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-300">
-                Ya tengo cuenta
-              </button>
+            <Link 
+              href="/sign-in?redirect_url=/providers/register"
+              className="bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-colors"
+            >
+              Ya tengo cuenta
             </Link>
           </div>
         </div>
