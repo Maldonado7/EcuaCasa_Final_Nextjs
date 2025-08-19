@@ -399,9 +399,14 @@ export default function EnhancedProviderRegistration() {
   const canProceedToNext = () => {
     switch (currentStep) {
       case 1:
-        return formData.name && formData.rucCedula && formData.phone && formData.category && formData.description
+        return formData.name && formData.rucCedula && formData.phone && formData.category && formData.description && formData.description.length >= 50
       case 2:
-        return formData.hourlyRate > 0 && formData.paymentMethods.length > 0
+        return (
+          formData.pricingModel &&
+          formData.paymentMethods.length > 0 &&
+          formData.guaranteePeriod > 0 &&
+          (formData.pricingModel !== 'hourly' || formData.hourlyRate > 0)
+        )
       case 3:
         return formData.coverageZones.length > 0 || formData.coversAllCuenca
       case 4:
@@ -928,11 +933,320 @@ export default function EnhancedProviderRegistration() {
             </div>
           )}
 
-          {/* Step 2: Services & Pricing - We'll add this next */}
+          {/* Step 2: Services & Pricing */}
           {currentStep === 2 && (
-            <div className="text-center py-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Servicios y Precios</h2>
-              <p className="text-gray-600">Esta sección está en desarrollo...</p>
+            <div className="space-y-8">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Servicios y Precios</h2>
+                <p className="text-gray-600">Define tus tarifas y forma de cobrar</p>
+              </div>
+
+              {/* Pricing Structure */}
+              <div className="space-y-6">
+                <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <DollarSign className="w-5 h-5" />
+                  Estructura de Precios
+                </h3>
+
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      ¿Cómo cobras por tus servicios? *
+                    </label>
+                    <div className="grid md:grid-cols-3 gap-4">
+                      {[
+                        { value: 'hourly', label: 'Por hora', desc: 'Cobras por tiempo trabajado', icon: '🕐' },
+                        { value: 'project', label: 'Por trabajo/proyecto', desc: 'Precio fijo por trabajo completo', icon: '📋' },
+                        { value: 'quote', label: 'Cotización según el caso', desc: 'Evalúas cada trabajo individualmente', icon: '📊' }
+                      ].map(option => (
+                        <label 
+                          key={option.value}
+                          className={`flex flex-col p-4 border-2 rounded-xl cursor-pointer transition-all ${
+                            formData.pricingModel === option.value 
+                              ? 'border-purple-500 bg-purple-50 ring-1 ring-purple-200' 
+                              : 'border-gray-200 hover:border-purple-200 hover:bg-purple-25'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            value={option.value}
+                            checked={formData.pricingModel === option.value}
+                            onChange={(e) => updateFormData('pricingModel', e.target.value)}
+                            className="sr-only"
+                          />
+                          <div className="flex items-center gap-3 mb-2">
+                            <span className="text-2xl">{option.icon}</span>
+                            <span className="font-medium text-gray-900">{option.label}</span>
+                            {formData.pricingModel === option.value && (
+                              <span className="ml-auto text-purple-600">✓</span>
+                            )}
+                          </div>
+                          <span className="text-xs text-gray-600">{option.desc}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Pricing Details */}
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {formData.pricingModel === 'hourly' && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Precio por Hora * 💰
+                        </label>
+                        <div className="relative">
+                          <div className="flex">
+                            <span className="inline-flex items-center px-3 text-gray-600 bg-gray-50 border border-r-0 border-gray-300 rounded-l-xl">
+                              $
+                            </span>
+                            <input
+                              type="number"
+                              value={formData.hourlyRate || ''}
+                              onChange={(e) => updateFormData('hourlyRate', parseFloat(e.target.value) || 0)}
+                              placeholder="25"
+                              min="5"
+                              max="200"
+                              className="flex-1 px-4 py-3 border border-gray-300 rounded-r-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            />
+                            <span className="inline-flex items-center px-3 text-gray-600 bg-gray-50 border border-l-0 border-gray-300 rounded-r-xl">
+                              USD/hora
+                            </span>
+                          </div>
+                          <div className="text-xs mt-1 flex items-center gap-1 text-gray-500">
+                            <span>💡</span>
+                            <span>Promedio en Cuenca: $15-45 para {formData.category}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Precio Mínimo de Visita 🚗
+                      </label>
+                      <div className="relative">
+                        <div className="flex">
+                          <span className="inline-flex items-center px-3 text-gray-600 bg-gray-50 border border-r-0 border-gray-300 rounded-l-xl">
+                            $
+                          </span>
+                          <input
+                            type="number"
+                            value={formData.minimumVisit || ''}
+                            onChange={(e) => updateFormData('minimumVisit', parseFloat(e.target.value) || 0)}
+                            placeholder="15"
+                            min="0"
+                            max="100"
+                            className="flex-1 px-4 py-3 border border-gray-300 rounded-r-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                          />
+                          <span className="inline-flex items-center px-3 text-gray-600 bg-gray-50 border border-l-0 border-gray-300 rounded-r-xl">
+                            USD
+                          </span>
+                        </div>
+                        <div className="text-xs mt-1 text-gray-500">
+                          Costo mínimo aunque no realices el trabajo
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Additional Options */}
+                  <div className="space-y-4">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={formData.freeEstimate}
+                        onChange={(e) => updateFormData('freeEstimate', e.target.checked)}
+                        className="mr-3 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                      />
+                      <label className="text-sm text-gray-700 flex items-center gap-2">
+                        <span>🆓</span>
+                        Ofrezco diagnóstico/cotización gratuita
+                      </label>
+                    </div>
+
+                    {!formData.freeEstimate && (
+                      <div className="ml-7">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Costo por Cotización
+                        </label>
+                        <div className="flex items-center gap-2 max-w-xs">
+                          <span className="text-sm text-gray-600">$</span>
+                          <input
+                            type="number"
+                            value={formData.quoteFee || ''}
+                            onChange={(e) => updateFormData('quoteFee', parseFloat(e.target.value) || 0)}
+                            placeholder="10"
+                            min="0"
+                            max="50"
+                            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                          />
+                          <span className="text-sm text-gray-600">USD</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Payment Methods */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      Formas de Pago Aceptadas * 💳
+                    </label>
+                    <div className="grid md:grid-cols-2 gap-3">
+                      {[
+                        { value: 'cash', label: 'Efectivo', icon: '💵', popular: true },
+                        { value: 'bank_transfer', label: 'Transferencia bancaria', icon: '🏦', popular: true },
+                        { value: 'credit_card', label: 'Tarjetas de crédito/débito', icon: '💳' },
+                        { value: 'check', label: 'Cheque', icon: '📝' }
+                      ].map(method => (
+                        <label 
+                          key={method.value}
+                          className={`flex items-center p-3 rounded-lg border cursor-pointer transition-all ${
+                            formData.paymentMethods.includes(method.value)
+                              ? 'bg-purple-50 border-purple-300 text-purple-900'
+                              : 'bg-white border-gray-200 hover:border-purple-200 hover:bg-purple-25'
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={formData.paymentMethods.includes(method.value)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                updateFormData('paymentMethods', [...formData.paymentMethods, method.value])
+                              } else {
+                                updateFormData('paymentMethods', formData.paymentMethods.filter(m => m !== method.value))
+                              }
+                            }}
+                            className="mr-3 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                          />
+                          <div className="flex items-center gap-2 flex-1">
+                            <span>{method.icon}</span>
+                            <span className="text-sm font-medium">{method.label}</span>
+                            {method.popular && (
+                              <span className="text-yellow-500 text-xs" title="Método popular">⭐</span>
+                            )}
+                            {formData.paymentMethods.includes(method.value) && (
+                              <span className="ml-auto text-purple-600">✓</span>
+                            )}
+                          </div>
+                        </label>
+                      ))}
+                    </div>
+                    {formData.paymentMethods.length === 0 && (
+                      <div className="text-xs text-orange-600 mt-2 flex items-center gap-1">
+                        <span>⚠️</span>
+                        <span>Debes seleccionar al menos una forma de pago</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Guarantees & Insurance */}
+              <div className="space-y-6">
+                <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <Shield className="w-5 h-5" />
+                  Garantías y Seguros
+                </h3>
+
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      Garantía de Trabajo * 🛡️
+                    </label>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      {[
+                        { value: 30, label: '30 días', popular: true },
+                        { value: 60, label: '60 días', popular: true },
+                        { value: 90, label: '90 días' },
+                        { value: 180, label: '6 meses' }
+                      ].map(period => (
+                        <label 
+                          key={period.value}
+                          className={`flex flex-col items-center p-3 border-2 rounded-xl cursor-pointer transition-all ${
+                            formData.guaranteePeriod === period.value 
+                              ? 'border-purple-500 bg-purple-50 text-purple-900' 
+                              : 'border-gray-200 hover:border-purple-200 hover:bg-purple-25'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            value={period.value}
+                            checked={formData.guaranteePeriod === period.value}
+                            onChange={(e) => updateFormData('guaranteePeriod', parseInt(e.target.value))}
+                            className="sr-only"
+                          />
+                          <span className="font-medium">{period.label}</span>
+                          {period.popular && (
+                            <span className="text-yellow-500 text-xs">⭐</span>
+                          )}
+                          {formData.guaranteePeriod === period.value && (
+                            <span className="text-purple-600 mt-1">✓</span>
+                          )}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Additional Services */}
+                  <div className="space-y-4">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <label className="flex items-center p-4 border rounded-xl cursor-pointer hover:bg-gray-50">
+                        <input
+                          type="checkbox"
+                          checked={formData.hasInsurance}
+                          onChange={(e) => updateFormData('hasInsurance', e.target.checked)}
+                          className="mr-3 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                        />
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span>🛡️</span>
+                            <span className="text-sm font-medium">Tengo seguro de responsabilidad civil</span>
+                          </div>
+                          <div className="text-xs text-gray-500 mt-1">
+                            Protege al cliente ante daños accidentales
+                          </div>
+                        </div>
+                      </label>
+
+                      <label className="flex items-center p-4 border rounded-xl cursor-pointer hover:bg-gray-50">
+                        <input
+                          type="checkbox"
+                          checked={formData.includesMaterials}
+                          onChange={(e) => updateFormData('includesMaterials', e.target.checked)}
+                          className="mr-3 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                        />
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span>🔧</span>
+                            <span className="text-sm font-medium">Trabajo con materiales incluidos</span>
+                          </div>
+                          <div className="text-xs text-gray-500 mt-1">
+                            Proporcionas todos los materiales necesarios
+                          </div>
+                        </div>
+                      </label>
+
+                      <label className="flex items-center p-4 border rounded-xl cursor-pointer hover:bg-gray-50">
+                        <input
+                          type="checkbox"
+                          checked={formData.offersContract}
+                          onChange={(e) => updateFormData('offersContract', e.target.checked)}
+                          className="mr-3 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                        />
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span>📋</span>
+                            <span className="text-sm font-medium">Ofrezco contrato de servicio</span>
+                          </div>
+                          <div className="text-xs text-gray-500 mt-1">
+                            Documentos formales para trabajos grandes
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
