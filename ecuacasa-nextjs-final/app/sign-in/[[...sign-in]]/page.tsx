@@ -1,9 +1,12 @@
 'use client'
 
 import { SignIn } from '@clerk/nextjs'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
 export default function Page() {
+  const searchParams = useSearchParams()
+  const redirectUrl = searchParams.get('redirect_url') || '/'
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-50 to-yellow-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -31,7 +34,8 @@ export default function Page() {
                 footerActionLink: 'text-purple-600 hover:text-purple-700 font-medium'
               }
             }}
-            redirectUrl="/"
+            forceRedirectUrl={redirectUrl}
+            fallbackRedirectUrl="/"
           />
         </div>
 

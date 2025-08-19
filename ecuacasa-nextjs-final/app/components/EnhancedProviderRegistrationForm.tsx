@@ -179,7 +179,7 @@ export default function EnhancedProviderRegistrationForm() {
                 Crear Cuenta
               </button>
             </Link>
-            <Link href="/sign-in">
+            <Link href="/sign-in?redirect_url=/providers/register">
               <button className="bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-300">
                 Ya tengo cuenta
               </button>
