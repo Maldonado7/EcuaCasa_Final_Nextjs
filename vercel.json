@@ -2,10 +2,5 @@
   "buildCommand": "cd ecuacasa-nextjs-final && npm run build",
   "outputDirectory": "ecuacasa-nextjs-final/.next",
   "installCommand": "cd ecuacasa-nextjs-final && npm install",
-  "framework": "nextjs",
-  "functions": {
-    "ecuacasa-nextjs-final/app/**/*.tsx": {
-      "runtime": "@vercel/node"
-    }
-  }
+  "framework": "nextjs"
 }
