@@ -1,5 +1,6 @@
 'use client'
 
+// Force cache invalidation - v2 registration form
 import { useState } from 'react'
 import { useUser } from '@clerk/nextjs'
 import Link from 'next/link'
