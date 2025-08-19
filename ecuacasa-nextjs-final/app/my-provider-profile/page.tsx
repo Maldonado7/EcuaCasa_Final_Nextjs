@@ -22,7 +22,7 @@ import {
   Users,
   XCircle
 } from 'lucide-react'
-import ImageUpload from '../components/ImageUpload'
+import UploadThingImageUpload from '../components/UploadThingImageUpload'
 
 interface Provider {
   id: string
@@ -695,24 +695,18 @@ export default function MyProviderProfile() {
           </div>
           
           {isEditing ? (
-            <ImageUpload
-              images={editForm?.portfolio_images || []}
-              onImageUpload={(url: string) => {
-                const currentImages = editForm?.portfolio_images || []
+            <UploadThingImageUpload
+              endpoint="providerGallery"
+              existingImages={editForm?.portfolio_images || []}
+              onUploadComplete={(urls: string[]) => {
                 setEditForm({
                   ...editForm!,
-                  portfolio_images: [...currentImages, url]
+                  portfolio_images: urls
                 })
               }}
-              onImageRemove={(url: string) => {
-                const currentImages = editForm?.portfolio_images || []
-                setEditForm({
-                  ...editForm!,
-                  portfolio_images: currentImages.filter(img => img !== url)
-                })
-              }}
-              maxImages={6}
+              maxFiles={6}
               title="Galería de Trabajos"
+              description="Sube fotos de tus trabajos realizados"
             />
           ) : (
             <div>
