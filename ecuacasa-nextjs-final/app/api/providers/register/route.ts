@@ -282,24 +282,7 @@ export async function GET() {
       error = result.error
     } 
     
-    // If no provider found yet, try to find by email match as fallback
-    if (!provider) {
-      const userEmail = user.emailAddresses[0]?.emailAddress
-      if (userEmail) {
-        const { data: emailProviders } = await supabaseAdmin
-          .from('providers')
-          .select('*')
-          .ilike('name', `%${userEmail.split('@')[0]}%`)
-          .order('created_at', { ascending: false })
-          .limit(5)
-        
-        // Try to find the most recent provider that could belong to this user
-        if (emailProviders && emailProviders.length > 0) {
-          provider = emailProviders[0] // Take the most recent one
-          console.log('Found provider by email fallback:', provider.id)
-        }
-      }
-    }
+    // No email-based fallback - only return exact matches
 
     // No fallback - only return actual user's provider profile
 
