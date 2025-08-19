@@ -1,49 +1,54 @@
+'use client'
+
+import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import TranslatedHomePage from './components/TranslatedHomePage'
 
-// Fetch featured providers from Cuenca
-async function getProviders() {
-  try {
-    const { data } = await supabase
-      .from('providers')
-      .select('*')
-      .order('rating', { ascending: false })
-      .limit(8)
-    
-    // Return providers from database only
-    // All providers (including samples) should be in the database
-    return data || []
-  } catch (error) {
-    console.error('Error fetching providers:', error)
-    return []
-  }
-}
+export default function Home() {
+  const [providers, setProviders] = useState<any[]>([])
+  const [services, setServices] = useState<any[]>([])
+  const [stats, setStats] = useState({ users: 2500, providers: 500 })
+  const [loading, setLoading] = useState(true)
 
-async function getServices() {
-  const { data } = await supabase
-    .from('services')
-    .select('*, providers(count)')
-    .limit(8)
-  
-  return data || []
-}
+  useEffect(() => {
+    async function fetchData() {
+      console.log('🔄 Fetching provider data for homepage...')
+      try {
+        // Fetch providers with a shorter timeout
+        const { data: providersData, error: providersError } = await supabase
+          .from('providers')
+          .select('*')
+          .order('rating', { ascending: false })
+          .limit(6)
+        
+        if (providersError) {
+          console.log('⚠️ Using empty provider data:', providersError.message)
+          setProviders([])
+        } else {
+          console.log(`✅ Fetched ${providersData?.length || 0} providers for homepage`)
+          setProviders(providersData || [])
+        }
 
-async function getStats() {
-  const { count: userCount } = await supabase
-    .from('users')
-    .select('*', { count: 'exact', head: true })
-  
-  const { count: providerCount } = await supabase
-    .from('providers')
-    .select('*', { count: 'exact', head: true })
+        // Set empty services for now
+        setServices([])
+        
+        // Use static stats
+        setStats({ users: 2500, providers: 500 })
+        
+      } catch (error) {
+        console.error('❌ Error fetching homepage data:', error)
+        setProviders([])
+        setServices([])
+        setStats({ users: 2500, providers: 500 })
+      } finally {
+        setLoading(false)
+      }
+    }
 
-  return { users: userCount || 2500, providers: providerCount || 500 }
-}
+    fetchData()
+  }, [])
 
-export default async function Home() {
-  const providers = await getProviders()
-  const services = await getServices()
-  const stats = await getStats()
+  console.log('✅ Home page rendering with provider data:', providers.length)
 
   return (
     <TranslatedHomePage 

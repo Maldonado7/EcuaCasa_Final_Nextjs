@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from '../context/TranslationContext'
 import LanguageToggle from './LanguageToggle'
 import BookingModal from './BookingModal'
-import { useUser, UserButton } from '@clerk/nextjs'
+import { useClerkSafe } from '../hooks/useClerkSafe'
 import Link from 'next/link'
 import { ArrowLeft, Star, Shield, Clock, MapPin, Phone, MessageCircle, Calendar, Award, CheckCircle, Users, DollarSign, Wrench, Camera, Heart } from 'lucide-react'
 
@@ -14,6 +14,7 @@ interface TranslatedProviderDetailPageProps {
 
 export default function TranslatedProviderDetailPage({ providerId }: TranslatedProviderDetailPageProps) {
   const { t } = useTranslation()
+  const { useUser, UserButton } = useClerkSafe()
   const { isSignedIn, user } = useUser()
   const [provider, setProvider] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -132,7 +133,7 @@ export default function TranslatedProviderDetailPage({ providerId }: TranslatedP
                       {t('nav.professional')}
                     </button>
                   </Link>
-                  <Link href="/sign-up">
+                  <Link href="/providers">
                     <button className="bg-black text-white px-6 py-2.5 rounded-full font-semibold hover:bg-gray-800 transition-all">
                       {t('nav.start')}
                     </button>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useTranslation } from '../context/TranslationContext'
-import { UserButton, useUser } from '@clerk/nextjs'
+import { useClerkSafe } from '../hooks/useClerkSafe'
 import CombinedLocationSelector from './CombinedLocationSelector'
 import ServiceSelector from './ServiceSelector'
 import LanguageToggle from './LanguageToggle'
@@ -18,7 +18,15 @@ interface TranslatedHomePageProps {
 
 export default function TranslatedHomePage({ providers, services, stats }: TranslatedHomePageProps) {
   const { t, language } = useTranslation()
-  const { isSignedIn, user } = useUser()
+  const { useUser, UserButton, isClerkDisabled } = useClerkSafe()
+  const [isClient, setIsClient] = useState(false)
+  
+  // Ensure we're on the client before using Clerk hooks
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+  
+  const { isSignedIn, user } = isClient ? useUser() : { isSignedIn: false, user: null }
   const [selectedLocation, setSelectedLocation] = useState('cuenca')
   const [selectedService, setSelectedService] = useState('')
   const [currentUserProviderId, setCurrentUserProviderId] = useState<string | null>(null)
