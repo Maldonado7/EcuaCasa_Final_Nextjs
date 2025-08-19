@@ -73,33 +73,8 @@ export default function MyProviderProfile() {
       const data = await response.json()
       
       if (data.hasProfile && data.provider) {
-        // Initialize ALL fields with defaults
-        const providerData = {
-          ...data.provider,
-          name: data.provider.name || '',
-          service_type: data.provider.service_type || '',
-          description: data.provider.description || '',
-          location: data.provider.location || '',
-          phone: data.provider.phone || '',
-          price_range: data.provider.price_range || '$25-45/hora',
-          response_time: data.provider.response_time || '30min',
-          availability: data.provider.availability || 'Lun-Dom 7:00-22:00',
-          experience: data.provider.experience || 5,
-          warranty: data.provider.warranty || '30 días',
-          insurance: data.provider.insurance || false,
-          emergency_available: data.provider.emergency_available || false,
-          services: data.provider.services || ['Servicio profesional garantizado'],
-          portfolio: data.provider.portfolio || [],
-          portfolio_images: data.provider.portfolio_images || [],
-          cedula: data.provider.cedula || '',
-          references: data.provider.references || [
-            { name: '', phone: '', service_provided: '' },
-            { name: '', phone: '', service_provided: '' },
-            { name: '', phone: '', service_provided: '' }
-          ]
-        }
-        setProvider(providerData)
-        setEditForm(providerData)
+        setProvider(data.provider)
+        setEditForm(data.provider)
       }
     } catch (error) {
       console.error('Error fetching provider profile:', error)
