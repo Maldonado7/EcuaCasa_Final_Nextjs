@@ -301,19 +301,7 @@ export async function GET() {
       }
     }
 
-    // Final fallback: find any recent provider (for development/testing)
-    if (!provider) {
-      const { data: recentProviders } = await supabaseAdmin
-        .from('providers')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(1)
-      
-      if (recentProviders && recentProviders.length > 0) {
-        provider = recentProviders[0]
-        console.log('Using most recent provider as fallback:', provider.id)
-      }
-    }
+    // No fallback - only return actual user's provider profile
 
     if (error && error.code !== 'PGRST116') {
       return NextResponse.json({ 
