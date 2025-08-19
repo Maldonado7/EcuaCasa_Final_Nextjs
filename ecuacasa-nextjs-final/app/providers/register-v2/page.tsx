@@ -81,18 +81,95 @@ const serviceCategories = {
   'OTROS': ['Especificar Servicio']
 }
 
-const specialtiesByCategory: Record<string, string[]> = {
-  'Plomería': ['Reparación de fugas', 'Instalación de grifos', 'Destape de cañerías', 'Calentadores de agua', 'Instalación de bombas', 'Mantenimiento preventivo'],
-  'Electricidad': ['Instalación eléctrica', 'Reparación de tomacorrientes', 'Cableado', 'Paneles eléctricos', 'Iluminación', 'Emergencias eléctricas'],
-  'Carpintería': ['Muebles a medida', 'Reparación de puertas', 'Closets', 'Cocinas', 'Pisos de madera', 'Trabajos de decoración'],
-  'Limpieza': ['Limpieza profunda', 'Limpieza de oficinas', 'Limpieza post-construcción', 'Limpieza de alfombras', 'Limpieza de vidrios', 'Desinfección'],
-  'Jardinería': ['Diseño de jardines', 'Mantenimiento', 'Poda de árboles', 'Sistemas de riego', 'Paisajismo', 'Control de plagas'],
-  'Pintura': ['Pintura interior', 'Pintura exterior', 'Pintura decorativa', 'Empapelado', 'Texturizado', 'Restauración'],
-  'Cerrajería': ['Cambio de cerraduras', 'Apertura de puertas', 'Llaves duplicadas', 'Cerraduras digitales', 'Rejas de seguridad', 'Emergencias 24/7'],
-  'Albañilería': ['Construcción', 'Remodelaciones', 'Mampostería', 'Pisos y azulejos', 'Reparaciones', 'Acabados'],
-  'Muebles y Decoración': ['Fabricación de muebles', 'Diseño a medida', 'Restauración', 'Instalación', 'Decoración de interiores', 'Tapicería'],
-  'Electrodomésticos': ['Reparación de neveras', 'Lavadoras y secadoras', 'Cocinas y hornos', 'Aires acondicionados', 'Mantenimiento', 'Instalación'],
-  'Materiales de Construcción': ['Venta de materiales', 'Asesoría técnica', 'Entrega a domicilio', 'Materiales especializados', 'Presupuestos', 'Mayoreo']
+const specialtiesByCategory: Record<string, Array<{name: string, popular?: boolean}>> = {
+  'Plomería': [
+    {name: 'Reparación de fugas', popular: true}, 
+    {name: 'Instalación de grifos', popular: true}, 
+    {name: 'Destape de cañerías', popular: true}, 
+    {name: 'Calentadores de agua'}, 
+    {name: 'Instalación de bombas'}, 
+    {name: 'Mantenimiento preventivo'}
+  ],
+  'Electricidad': [
+    {name: 'Instalación eléctrica', popular: true}, 
+    {name: 'Reparación de tomacorrientes', popular: true}, 
+    {name: 'Cableado'}, 
+    {name: 'Paneles eléctricos'}, 
+    {name: 'Iluminación', popular: true}, 
+    {name: 'Emergencias eléctricas'}
+  ],
+  'Carpintería': [
+    {name: 'Muebles a medida', popular: true}, 
+    {name: 'Reparación de puertas', popular: true}, 
+    {name: 'Closets', popular: true}, 
+    {name: 'Cocinas'}, 
+    {name: 'Pisos de madera'}, 
+    {name: 'Trabajos de decoración'}
+  ],
+  'Muebles y Decoración': [
+    {name: 'Fabricación de muebles', popular: true}, 
+    {name: 'Diseño a medida', popular: true}, 
+    {name: 'Restauración', popular: true}, 
+    {name: 'Instalación'}, 
+    {name: 'Decoración de interiores'}, 
+    {name: 'Tapicería'}
+  ],
+  'Limpieza': [
+    {name: 'Limpieza profunda', popular: true}, 
+    {name: 'Limpieza de oficinas', popular: true}, 
+    {name: 'Limpieza post-construcción'}, 
+    {name: 'Limpieza de alfombras'}, 
+    {name: 'Limpieza de vidrios'}, 
+    {name: 'Desinfección'}
+  ],
+  'Jardinería': [
+    {name: 'Diseño de jardines', popular: true}, 
+    {name: 'Mantenimiento', popular: true}, 
+    {name: 'Poda de árboles', popular: true}, 
+    {name: 'Sistemas de riego'}, 
+    {name: 'Paisajismo'}, 
+    {name: 'Control de plagas'}
+  ],
+  'Pintura': [
+    {name: 'Pintura interior', popular: true}, 
+    {name: 'Pintura exterior', popular: true}, 
+    {name: 'Pintura decorativa'}, 
+    {name: 'Empapelado'}, 
+    {name: 'Texturizado'}, 
+    {name: 'Restauración'}
+  ],
+  'Cerrajería': [
+    {name: 'Cambio de cerraduras', popular: true}, 
+    {name: 'Apertura de puertas', popular: true}, 
+    {name: 'Llaves duplicadas', popular: true}, 
+    {name: 'Cerraduras digitales'}, 
+    {name: 'Rejas de seguridad'}, 
+    {name: 'Emergencias 24/7'}
+  ],
+  'Albañilería': [
+    {name: 'Construcción', popular: true}, 
+    {name: 'Remodelaciones', popular: true}, 
+    {name: 'Mampostería'}, 
+    {name: 'Pisos y azulejos', popular: true}, 
+    {name: 'Reparaciones'}, 
+    {name: 'Acabados'}
+  ],
+  'Electrodomésticos': [
+    {name: 'Reparación de neveras', popular: true}, 
+    {name: 'Lavadoras y secadoras', popular: true}, 
+    {name: 'Cocinas y hornos'}, 
+    {name: 'Aires acondicionados', popular: true}, 
+    {name: 'Mantenimiento'}, 
+    {name: 'Instalación'}
+  ],
+  'Materiales de Construcción': [
+    {name: 'Venta de materiales', popular: true}, 
+    {name: 'Asesoría técnica', popular: true}, 
+    {name: 'Entrega a domicilio'}, 
+    {name: 'Materiales especializados'}, 
+    {name: 'Presupuestos', popular: true}, 
+    {name: 'Mayoreo'}
+  ]
 }
 
 export default function EnhancedProviderRegistration() {
@@ -161,31 +238,91 @@ export default function EnhancedProviderRegistration() {
     updateCompletionPercentage()
   }
 
+  // Ecuadorian ID validation algorithms
+  const isValidCedula = (cedula: string): boolean => {
+    if (cedula.length !== 10) return false
+    
+    const digits = cedula.split('').map(Number)
+    const province = parseInt(cedula.substring(0, 2))
+    
+    // Check valid province (01-24)
+    if (province < 1 || province > 24) return false
+    
+    // Validate using algorithm
+    const coefficients = [2, 1, 2, 1, 2, 1, 2, 1, 2]
+    let sum = 0
+    
+    for (let i = 0; i < 9; i++) {
+      let product = digits[i] * coefficients[i]
+      if (product >= 10) product -= 9
+      sum += product
+    }
+    
+    const checkDigit = ((Math.ceil(sum / 10) * 10) - sum) % 10
+    return checkDigit === digits[9]
+  }
+
+  const isValidRUC = (ruc: string): boolean => {
+    if (ruc.length !== 13) return false
+    
+    const thirdDigit = parseInt(ruc[2])
+    
+    // Natural person RUC (third digit 0-5)
+    if (thirdDigit >= 0 && thirdDigit <= 5) {
+      return isValidCedula(ruc.substring(0, 10)) && ruc.substring(10) === '001'
+    }
+    
+    // Company RUC (third digit 9)
+    if (thirdDigit === 9) {
+      const digits = ruc.split('').map(Number)
+      const coefficients = [4, 3, 2, 7, 6, 5, 4, 3, 2]
+      let sum = 0
+      
+      for (let i = 0; i < 9; i++) {
+        sum += digits[i] * coefficients[i]
+      }
+      
+      const checkDigit = 11 - (sum % 11)
+      const finalCheck = checkDigit >= 10 ? 0 : checkDigit
+      return finalCheck === digits[9] && ruc.substring(10) === '001'
+    }
+    
+    return false
+  }
+
   // Smart validation functions
   const validateRucCedula = (value: string) => {
     const len = value.length
     if (len === 10) {
-      return { text: '✓ Cédula válida', color: 'text-green-600', bgColor: 'bg-green-50', borderColor: 'border-green-300' }
+      const isValid = isValidCedula(value)
+      return isValid
+        ? { text: '✓ Cédula válida (10/10)', color: 'text-green-600', bgColor: 'bg-green-50', borderColor: 'border-green-300', icon: '✓' }
+        : { text: '⚠️ Esta cédula parece incorrecta. Verifica los dígitos', color: 'text-red-600', bgColor: 'bg-red-50', borderColor: 'border-red-300', icon: '⚠️' }
     } else if (len === 13) {
-      return { text: '✓ RUC válido', color: 'text-green-600', bgColor: 'bg-green-50', borderColor: 'border-green-300' }
+      const isValid = isValidRUC(value)
+      return isValid
+        ? { text: '✓ RUC válido (13/13)', color: 'text-green-600', bgColor: 'bg-green-50', borderColor: 'border-green-300', icon: '✓' }
+        : { text: '⚠️ Este RUC parece incorrecto. Verifica los dígitos', color: 'text-red-600', bgColor: 'bg-red-50', borderColor: 'border-red-300', icon: '⚠️' }
     } else if (len < 10 && len > 0) {
       return { 
-        text: `Faltan ${10 - len} dígitos para Cédula`, 
+        text: `Faltan ${10 - len} dígitos para completar tu cédula (${len}/10)`, 
         color: 'text-orange-600', 
         bgColor: 'bg-orange-50', 
-        borderColor: 'border-orange-300'
+        borderColor: 'border-orange-300',
+        icon: '⏳'
       }
     } else if (len > 10 && len < 13) {
       return { 
-        text: `Faltan ${13 - len} dígitos para RUC`, 
+        text: `Faltan ${13 - len} dígitos para completar tu RUC (${len}/13)`, 
         color: 'text-orange-600', 
         bgColor: 'bg-orange-50', 
-        borderColor: 'border-orange-300'
+        borderColor: 'border-orange-300',
+        icon: '⏳'
       }
     } else if (len > 13) {
-      return { text: 'Máximo 13 dígitos', color: 'text-red-600', bgColor: 'bg-red-50', borderColor: 'border-red-300' }
+      return { text: 'Máximo 13 dígitos permitidos', color: 'text-red-600', bgColor: 'bg-red-50', borderColor: 'border-red-300', icon: '⚠️' }
     }
-    return { text: 'Ingresa Cédula (10 dígitos) o RUC (13 dígitos)', color: 'text-gray-500', bgColor: '', borderColor: 'border-gray-300' }
+    return { text: 'Ingresa tu Cédula (10 dígitos) o RUC (13 dígitos)', color: 'text-gray-500', bgColor: '', borderColor: 'border-gray-300', icon: '📝' }
   }
 
   const handleRucCedulaChange = (value: string) => {
@@ -210,20 +347,30 @@ export default function EnhancedProviderRegistration() {
   const validatePhone = (value: string) => {
     const numbers = value.replace(/\D/g, '')
     if (numbers.length === 9 && numbers.startsWith('9')) {
-      return { text: '✓ Número válido', color: 'text-green-600' }
-    } else if (numbers.length > 0) {
-      return { text: `Faltan ${9 - numbers.length} dígitos`, color: 'text-orange-600' }
+      return { text: '✓ Número móvil válido', color: 'text-green-600', icon: '✓' }
+    } else if (numbers.length === 9 && !numbers.startsWith('9')) {
+      return { text: '⚠️ Número móvil debe empezar con 9', color: 'text-red-600', icon: '⚠️' }
+    } else if (numbers.length > 0 && numbers.length < 9) {
+      return { text: `Faltan ${9 - numbers.length} dígitos para completar (${numbers.length}/9)`, color: 'text-orange-600', icon: '⏳' }
+    } else if (numbers.length > 9) {
+      return { text: '⚠️ Máximo 9 dígitos permitidos', color: 'text-red-600', icon: '⚠️' }
     }
-    return { text: 'Formato: 9 XXXX XXXX', color: 'text-gray-500' }
+    return { text: 'Formato: 9 XXXX XXXX (números móviles Ecuador)', color: 'text-gray-500', icon: '📱' }
   }
 
   const validateDescription = (text: string) => {
-    if (text.length >= 50) {
-      return { text: `${text.length}/500 caracteres ✓ Mínimo alcanzado`, color: 'text-green-600' }
+    if (text.length >= 100 && text.length <= 500) {
+      return { text: `${text.length}/500 caracteres ✓ Perfecto`, color: 'text-green-600', icon: '✓' }
+    } else if (text.length >= 50) {
+      return { text: `${text.length}/500 caracteres ✓ Mínimo alcanzado`, color: 'text-green-600', icon: '✓' }
     } else if (text.length > 0) {
-      return { text: `${text.length}/500 - Mínimo 50 caracteres (faltan ${50 - text.length})`, color: 'text-orange-600' }
+      return { text: `${text.length}/500 - Mínimo 50 caracteres (faltan ${50 - text.length})`, color: 'text-orange-600', icon: '⏳' }
     }
-    return { text: '0/500 - Mínimo 50 caracteres', color: 'text-gray-500' }
+    return { text: '0/500 - Mínimo 50 caracteres requeridos', color: 'text-gray-500', icon: '📝' }
+  }
+
+  const getDescriptionTip = () => {
+    return "💡 Tip: Menciona tu experiencia, garantías ofrecidas, y qué te diferencia de otros profesionales"
   }
 
   const updateCompletionPercentage = () => {
@@ -531,8 +678,9 @@ export default function EnhancedProviderRegistration() {
                           validateRucCedula(formData.rucCedula).borderColor
                         } ${validateRucCedula(formData.rucCedula).bgColor}`}
                       />
-                      <div className={`text-xs mt-1 ${validateRucCedula(formData.rucCedula).color}`}>
-                        {validateRucCedula(formData.rucCedula).text}
+                      <div className={`text-xs mt-1 flex items-center gap-1 ${validateRucCedula(formData.rucCedula).color}`}>
+                        <span>{validateRucCedula(formData.rucCedula).icon}</span>
+                        <span>{validateRucCedula(formData.rucCedula).text}</span>
                       </div>
                     </div>
                   </div>
@@ -574,8 +722,9 @@ export default function EnhancedProviderRegistration() {
                           className="flex-1 px-4 py-3 border border-gray-300 rounded-r-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                         />
                       </div>
-                      <div className={`text-xs mt-1 ${validatePhone(formData.phone).color}`}>
-                        {validatePhone(formData.phone).text}
+                      <div className={`text-xs mt-1 flex items-center gap-1 ${validatePhone(formData.phone).color}`}>
+                        <span>{validatePhone(formData.phone).icon}</span>
+                        <span>{validatePhone(formData.phone).text}</span>
                       </div>
                     </div>
                     <div className="flex items-center mt-3">
@@ -643,24 +792,37 @@ export default function EnhancedProviderRegistration() {
                       <label className="block text-sm font-medium text-gray-700 mb-3">
                         Especialidades (selecciona hasta 3) *
                       </label>
-                      <div className="space-y-2">
-                        <div className="text-xs text-gray-500 mb-3">
-                          {formData.specialties.length}/3 especialidades seleccionadas
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="text-xs text-gray-600">
+                            Más populares en {formData.category}:
+                          </div>
+                          <div className={`text-xs px-2 py-1 rounded-full ${
+                            formData.specialties.length === 3 
+                              ? 'bg-red-100 text-red-600' 
+                              : formData.specialties.length > 0
+                                ? 'bg-blue-100 text-blue-600'
+                                : 'bg-gray-100 text-gray-600'
+                          }`}>
+                            {formData.specialties.length}/3 seleccionadas
+                            {formData.specialties.length === 3 && ' ⚠️ Máximo alcanzado'}
+                          </div>
                         </div>
+                        
                         <div className="grid md:grid-cols-2 gap-3">
                           {specialtiesByCategory[formData.category].map(specialty => {
-                            const isSelected = formData.specialties.includes(specialty)
+                            const isSelected = formData.specialties.includes(specialty.name)
                             const isDisabled = !isSelected && formData.specialties.length >= 3
                             
                             return (
                               <label 
-                                key={specialty} 
+                                key={specialty.name} 
                                 className={`flex items-center p-3 rounded-lg border cursor-pointer transition-all ${
                                   isSelected 
-                                    ? 'bg-purple-50 border-purple-300 text-purple-900' 
+                                    ? 'bg-purple-50 border-purple-300 text-purple-900 ring-1 ring-purple-200' 
                                     : isDisabled 
                                       ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed'
-                                      : 'bg-white border-gray-200 hover:border-purple-200 hover:bg-purple-25'
+                                      : 'bg-white border-gray-200 hover:border-purple-200 hover:bg-purple-25 hover:shadow-sm'
                                 }`}
                               >
                                 <input
@@ -668,25 +830,41 @@ export default function EnhancedProviderRegistration() {
                                   checked={isSelected}
                                   onChange={(e) => {
                                     if (e.target.checked && formData.specialties.length < 3) {
-                                      updateFormData('specialties', [...formData.specialties, specialty])
+                                      updateFormData('specialties', [...formData.specialties, specialty.name])
                                     } else if (!e.target.checked) {
-                                      updateFormData('specialties', formData.specialties.filter(s => s !== specialty))
+                                      updateFormData('specialties', formData.specialties.filter(s => s !== specialty.name))
                                     }
                                   }}
                                   disabled={isDisabled}
                                   className="mr-3 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
                                 />
-                                <span className="text-sm font-medium">{specialty}</span>
-                                {isSelected && (
-                                  <span className="ml-auto text-purple-600">✓</span>
-                                )}
+                                <div className="flex-1 flex items-center justify-between">
+                                  <span className="text-sm font-medium">{specialty.name}</span>
+                                  <div className="flex items-center gap-2">
+                                    {specialty.popular && (
+                                      <span className="text-yellow-500" title="Especialidad popular">⭐</span>
+                                    )}
+                                    {isSelected && (
+                                      <span className="text-purple-600 font-bold">✓</span>
+                                    )}
+                                  </div>
+                                </div>
                               </label>
                             )
                           })}
                         </div>
+                        
                         {formData.specialties.length === 3 && (
-                          <div className="text-xs text-green-600 bg-green-50 p-2 rounded-lg">
-                            ✓ Perfecto! Has seleccionado 3 especialidades
+                          <div className="text-xs text-green-600 bg-green-50 border border-green-200 p-3 rounded-lg flex items-center gap-2">
+                            <span className="text-green-600">✅</span>
+                            <span>¡Perfecto! Has seleccionado 3 especialidades. Esto ayudará a los clientes a encontrarte más fácilmente.</span>
+                          </div>
+                        )}
+                        
+                        {formData.specialties.length < 3 && formData.specialties.length > 0 && (
+                          <div className="text-xs text-blue-600 bg-blue-50 border border-blue-200 p-3 rounded-lg flex items-center gap-2">
+                            <span className="text-blue-600">💡</span>
+                            <span>Puedes seleccionar hasta {3 - formData.specialties.length} especialidad{3 - formData.specialties.length !== 1 ? 'es' : ''} más para mejorar tu visibilidad.</span>
                           </div>
                         )}
                       </div>
@@ -733,8 +911,16 @@ export default function EnhancedProviderRegistration() {
                         formData.description.length > 0 ? 'border-orange-300 bg-orange-50' : 'border-gray-300'
                       }`}
                     />
-                    <div className={`text-xs mt-1 ${validateDescription(formData.description).color}`}>
-                      {validateDescription(formData.description).text}
+                    <div className="space-y-2 mt-2">
+                      <div className={`text-xs flex items-center gap-1 ${validateDescription(formData.description).color}`}>
+                        <span>{validateDescription(formData.description).icon}</span>
+                        <span>{validateDescription(formData.description).text}</span>
+                      </div>
+                      {formData.description.length < 50 && (
+                        <div className="text-xs text-blue-600 bg-blue-50 p-2 rounded-lg">
+                          {getDescriptionTip()}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
