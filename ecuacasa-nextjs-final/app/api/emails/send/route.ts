@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { currentUser } from '@clerk/nextjs/server'
-import BookingConfirmationEmail from '@/components/emails/BookingConfirmationEmail'
+import BookingConfirmationEmail from '../../../components/emails/BookingConfirmationEmail'
 
 const resend = new Resend(process.env.RESEND_API_KEY || 'demo-key')
 

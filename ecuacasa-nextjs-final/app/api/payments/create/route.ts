@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { currentUser } from '@clerk/nextjs/server'
-import { calculateBookingFees } from '@/lib/businessConfig'
+import { calculateBookingFees } from '../../../lib/businessConfig'
 
 export async function POST(request: Request) {
   try {

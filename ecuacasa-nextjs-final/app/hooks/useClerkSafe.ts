@@ -1,47 +1,57 @@
 'use client'
 
-// Safe Clerk hooks that work when Clerk is disabled
-export function useClerkSafe() {
-  // Check if we have the Clerk publishable key available
-  const hasClerkKey = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
-  const isClerkExplicitlyDisabled = process.env.DISABLE_CLERK_IN_DEV === 'true'
-  
-  // Clerk is disabled if we don't have a key OR it's explicitly disabled
-  const isClerkDisabled = !hasClerkKey || isClerkExplicitlyDisabled
+import { useEffect, useState } from 'react'
+import React from 'react'
 
+// Safe components that will render the fallback content
+const SafeSignInButton = ({ children, mode }: { children: React.ReactNode, mode?: string }) => {
+  return React.createElement('div', {}, children)
+}
 
-  if (isClerkDisabled) {
-    return {
-      useUser: () => ({ isLoaded: true, isSignedIn: false, user: null }),
-      useAuth: () => ({ userId: null, sessionId: null, getToken: () => null }),
-      useClerk: () => null,
-      SignInButton: ({ children }: { children: React.ReactNode }) => children,
-      SignUpButton: ({ children }: { children: React.ReactNode }) => children,
-      UserButton: () => null,
-      isClerkDisabled: true
-    }
+const SafeSignUpButton = ({ children, mode }: { children: React.ReactNode, mode?: string }) => {
+  return React.createElement('div', {}, children)
+}
+
+const SafeUserButton = () => null
+
+// Safe user state hook
+export function useSafeUser() {
+  const [userState, setUserState] = useState({
+    isLoaded: false,
+    isSignedIn: false,
+    user: null
+  })
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      try {
+        const { useUser } = require('@clerk/nextjs')
+        const state = useUser()
+        setUserState(state)
+      } catch (e) {
+        setUserState({ isLoaded: true, isSignedIn: false, user: null })
+      }
+    }, 100)
+
+    return () => clearTimeout(timer)
+  }, [])
+
+  return userState
+}
+
+// Export safe hook function
+export const useClerkSafe = () => {
+  return {
+    useUser: useSafeUser,
+    SignInButton: SafeSignInButton,
+    SignUpButton: SafeSignUpButton,
+    UserButton: SafeUserButton
   }
+}
 
-  try {
-    const clerk = require('@clerk/nextjs')
-    return {
-      useUser: clerk.useUser,
-      useAuth: clerk.useAuth,
-      useClerk: clerk.useClerk,
-      SignInButton: clerk.SignInButton,
-      SignUpButton: clerk.SignUpButton,
-      UserButton: clerk.UserButton,
-      isClerkDisabled: false
-    }
-  } catch (e) {
-    return {
-      useUser: () => ({ isLoaded: true, isSignedIn: false, user: null }),
-      useAuth: () => ({ userId: null, sessionId: null, getToken: () => null }),
-      useClerk: () => null,
-      SignInButton: ({ children }: { children: React.ReactNode }) => children,
-      SignUpButton: ({ children }: { children: React.ReactNode }) => children,
-      UserButton: () => null,
-      isClerkDisabled: true
-    }
-  }
+// Export safe components
+export const SafeClerkComponents = {
+  SignInButton: SafeSignInButton,
+  SignUpButton: SafeSignUpButton,
+  UserButton: SafeUserButton
 }

@@ -91,7 +91,10 @@ export async function POST(request: Request) {
       phone: providerData.phone,
       rating: 5.0,
       verified: false,
-      type: providerData.type || 'individual'
+      type: providerData.type || 'individual',
+      profile_image_url: providerData.profile_image_url || null,
+      experience_years: providerData.experience_years ? parseInt(providerData.experience_years) : null,
+      certifications: providerData.certifications || null
     }
 
     // Try to create a user record first, then use that ID
@@ -148,6 +151,64 @@ export async function POST(request: Request) {
         error: 'Failed to create provider profile',
         details: error.message
       }, { status: 500 })
+    }
+
+    // Save gallery images if provided
+    try {
+      const galleryImages = []
+      
+      // Add gallery images
+      if (providerData.gallery_images && providerData.gallery_images.length > 0) {
+        providerData.gallery_images.forEach((imageUrl: string) => {
+          galleryImages.push({
+            provider_user_id: user.id,
+            image_url: imageUrl,
+            image_type: 'work_sample',
+            uploaded_at: new Date().toISOString()
+          })
+        })
+      }
+
+      // Add before/after images
+      if (providerData.before_after_images && providerData.before_after_images.length > 0) {
+        providerData.before_after_images.forEach((imageUrl: string) => {
+          galleryImages.push({
+            provider_user_id: user.id,
+            image_url: imageUrl,
+            image_type: 'before_after',
+            uploaded_at: new Date().toISOString()
+          })
+        })
+      }
+
+      // Add certification documents
+      if (providerData.certification_documents && providerData.certification_documents.length > 0) {
+        providerData.certification_documents.forEach((imageUrl: string) => {
+          galleryImages.push({
+            provider_user_id: user.id,
+            image_url: imageUrl,
+            image_type: 'certification',
+            uploaded_at: new Date().toISOString()
+          })
+        })
+      }
+
+      // Save all gallery images
+      if (galleryImages.length > 0) {
+        const { error: galleryError } = await supabaseAdmin
+          .from('provider_gallery')
+          .insert(galleryImages)
+
+        if (galleryError) {
+          console.error('Error saving gallery images:', galleryError)
+          // Don't fail the entire registration, just log the error
+        } else {
+          console.log(`Saved ${galleryImages.length} gallery images for provider`)
+        }
+      }
+    } catch (galleryErr) {
+      console.error('Error processing gallery images:', galleryErr)
+      // Don't fail the registration
     }
 
     // Update user role in user_profiles if exists

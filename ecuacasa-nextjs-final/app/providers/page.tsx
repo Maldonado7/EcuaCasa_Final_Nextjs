@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { supabase } from '@/lib/supabase'
 import TranslatedProvidersPage from '../components/TranslatedProvidersPage'
 
@@ -23,9 +24,23 @@ async function getProviders() {
   }
 }
 
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
+        <p className="mt-4 text-gray-600">Cargando profesionales...</p>
+      </div>
+    </div>
+  )
+}
 
 export default async function ProvidersPage() {
   const providers = await getProviders()
 
-  return <TranslatedProvidersPage providers={providers} />
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <TranslatedProvidersPage providers={providers} />
+    </Suspense>
+  )
 }

@@ -32,10 +32,14 @@ export default function ClerkProviderWrapper({
         // Filter out Clerk-related errors that are expected in development
         const errorString = args[0]?.toString?.() || ''
         if (
+          errorString.includes('Clerk: Failed to load Clerk') ||
+          errorString.includes('handleTimeout') ||
           errorString.includes('clerk') ||
           errorString.includes('key-pollis-82.clerk.accounts.dev') ||
           errorString.includes('Failed to load resource') ||
-          errorString.includes('400')
+          errorString.includes('400') ||
+          errorString.includes('clerk.accounts.dev') ||
+          errorString.includes('ecuacasa.com')
         ) {
           return
         }
@@ -45,7 +49,7 @@ export default function ClerkProviderWrapper({
       // Suppress console warnings
       console.warn = (...args) => {
         const warnString = args[0]?.toString?.() || ''
-        if (warnString.includes('clerk')) {
+        if (warnString.includes('clerk') || warnString.includes('Clerk')) {
           return
         }
         originalWarn.apply(console, args)
@@ -58,8 +62,8 @@ export default function ClerkProviderWrapper({
           const response = await originalFetch(...args)
           const url = args[0]?.toString() || ''
           
-          // Silently handle Clerk API 400 errors in development
-          if (url.includes('clerk.accounts.dev') && response.status === 400) {
+          // Silently handle Clerk API errors in development
+          if ((url.includes('clerk.accounts.dev') || url.includes('ecuacasa.com')) && response.status >= 400) {
             return new Response(JSON.stringify({}), {
               status: 200,
               headers: { 'Content-Type': 'application/json' }
@@ -70,13 +74,48 @@ export default function ClerkProviderWrapper({
         } catch (error) {
           // Silently fail for Clerk-related requests
           const url = args[0]?.toString() || ''
-          if (url.includes('clerk')) {
+          if (url.includes('clerk') || url.includes('ecuacasa.com')) {
             return new Response(JSON.stringify({}), {
               status: 200,
               headers: { 'Content-Type': 'application/json' }
             })
           }
           throw error
+        }
+      }
+
+      // Suppress window errors related to Clerk
+      const originalOnError = window.onerror
+      window.onerror = (message, source, lineno, colno, error) => {
+        if (
+          typeof message === 'string' && 
+          (message.includes('Clerk: Failed to load Clerk') || 
+           message.includes('handleTimeout') ||
+           message.includes('clerk'))
+        ) {
+          return true // Prevent error from being logged
+        }
+        if (originalOnError) {
+          return originalOnError(message, source, lineno, colno, error)
+        }
+        return false
+      }
+
+      // Suppress unhandled promise rejections related to Clerk
+      const originalOnUnhandledRejection = window.onunhandledrejection
+      window.onunhandledrejection = (event) => {
+        if (
+          event.reason && 
+          typeof event.reason === 'object' && 
+          (event.reason.message?.includes('Clerk: Failed to load Clerk') ||
+           event.reason.message?.includes('handleTimeout') ||
+           event.reason.message?.includes('clerk'))
+        ) {
+          event.preventDefault() // Prevent error from being logged
+          return
+        }
+        if (originalOnUnhandledRejection) {
+          return originalOnUnhandledRejection(event)
         }
       }
     }

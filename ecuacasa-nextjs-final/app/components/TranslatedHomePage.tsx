@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useTranslation } from '../context/TranslationContext'
-import { useClerkSafe } from '../hooks/useClerkSafe'
+import { useUser, UserButton } from '@clerk/nextjs'
 import CombinedLocationSelector from './CombinedLocationSelector'
 import ServiceSelector from './ServiceSelector'
 import LanguageToggle from './LanguageToggle'
@@ -18,19 +18,19 @@ interface TranslatedHomePageProps {
 
 export default function TranslatedHomePage({ providers, services, stats }: TranslatedHomePageProps) {
   const { t, language } = useTranslation()
-  const { useUser, UserButton, isClerkDisabled } = useClerkSafe()
   const [isClient, setIsClient] = useState(false)
+  const [selectedLocation, setSelectedLocation] = useState('cuenca')
+  const [selectedService, setSelectedService] = useState('')
+  const [currentUserProviderId, setCurrentUserProviderId] = useState<string | null>(null)
+  const [userHasProviderProfile, setUserHasProviderProfile] = useState(false)
+  
+  // Use Clerk hooks directly
+  const { isSignedIn, user } = useUser()
   
   // Ensure we're on the client before using Clerk hooks
   useEffect(() => {
     setIsClient(true)
   }, [])
-  
-  const { isSignedIn, user } = isClient ? useUser() : { isSignedIn: false, user: null }
-  const [selectedLocation, setSelectedLocation] = useState('cuenca')
-  const [selectedService, setSelectedService] = useState('')
-  const [currentUserProviderId, setCurrentUserProviderId] = useState<string | null>(null)
-  const [userHasProviderProfile, setUserHasProviderProfile] = useState(false)
   
   // Fetch current user's provider profile if they are signed in
   useEffect(() => {

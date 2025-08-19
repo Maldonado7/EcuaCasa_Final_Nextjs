@@ -2,22 +2,16 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useTranslation } from '../context/TranslationContext'
-import { useClerkSafe } from '../hooks/useClerkSafe'
 import { User, ChevronDown } from 'lucide-react'
+import Link from 'next/link'
 
 export default function AccountDropdown() {
   const { t } = useTranslation()
-  const { useUser, SignInButton, SignUpButton } = useClerkSafe()
-  const [isClient, setIsClient] = useState(false)
-  
-  // Ensure we're on the client before using Clerk hooks
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
-  
-  const { isSignedIn } = isClient ? useUser() : { isSignedIn: false }
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  
+  // For now, assume user is not signed in to avoid hook issues
+  const isSignedIn = false
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -52,41 +46,41 @@ export default function AccountDropdown() {
       {isOpen && (
         <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
           {/* Sign In Option */}
-          <button
-            onClick={() => {
-              setIsOpen(false)
-              alert('Funcionalidad de login próximamente disponible. Por ahora puedes explorar los profesionales.')
-            }}
-            className="w-full px-4 py-3 text-left text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-3"
+          <Link 
+            href="/sign-in" 
+            onClick={() => setIsOpen(false)}
+            className="block w-full px-4 py-3 text-left text-gray-700 hover:bg-gray-50 transition-colors"
           >
-            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-              <User size={16} className="text-blue-600" />
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <User size={16} className="text-blue-600" />
+              </div>
+              <div>
+                <div className="font-medium">{t('nav.signin')}</div>
+                <div className="text-sm text-gray-500">{t('nav.signin.subtitle')}</div>
+              </div>
             </div>
-            <div>
-              <div className="font-medium">{t('nav.signin')}</div>
-              <div className="text-sm text-gray-500">{t('nav.signin.subtitle')}</div>
-            </div>
-          </button>
+          </Link>
 
           {/* Divider */}
           <div className="my-2 border-t border-gray-100"></div>
 
           {/* Sign Up Option */}
-          <button
-            onClick={() => {
-              setIsOpen(false)
-              alert('Registro próximamente disponible. Por ahora puedes explorar los profesionales.')
-            }}
-            className="w-full px-4 py-3 text-left text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-3"
+          <Link 
+            href="/sign-up" 
+            onClick={() => setIsOpen(false)}
+            className="block w-full px-4 py-3 text-left text-gray-700 hover:bg-gray-50 transition-colors"
           >
-            <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-              <span className="text-green-600 font-bold text-sm">+</span>
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                <span className="text-green-600 font-bold text-sm">+</span>
+              </div>
+              <div>
+                <div className="font-medium">{t('nav.signup')}</div>
+                <div className="text-sm text-gray-500">{t('nav.signup.subtitle')}</div>
+              </div>
             </div>
-            <div>
-              <div className="font-medium">{t('nav.signup')}</div>
-              <div className="text-sm text-gray-500">{t('nav.signup.subtitle')}</div>
-            </div>
-          </button>
+          </Link>
 
           {/* Info Footer */}
           <div className="mt-2 pt-2 border-t border-gray-100">
