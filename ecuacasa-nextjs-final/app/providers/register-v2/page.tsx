@@ -85,7 +85,14 @@ const specialtiesByCategory: Record<string, string[]> = {
   'Plomería': ['Reparación de fugas', 'Instalación de grifos', 'Destape de cañerías', 'Calentadores de agua', 'Instalación de bombas', 'Mantenimiento preventivo'],
   'Electricidad': ['Instalación eléctrica', 'Reparación de tomacorrientes', 'Cableado', 'Paneles eléctricos', 'Iluminación', 'Emergencias eléctricas'],
   'Carpintería': ['Muebles a medida', 'Reparación de puertas', 'Closets', 'Cocinas', 'Pisos de madera', 'Trabajos de decoración'],
-  // Add more as needed
+  'Limpieza': ['Limpieza profunda', 'Limpieza de oficinas', 'Limpieza post-construcción', 'Limpieza de alfombras', 'Limpieza de vidrios', 'Desinfección'],
+  'Jardinería': ['Diseño de jardines', 'Mantenimiento', 'Poda de árboles', 'Sistemas de riego', 'Paisajismo', 'Control de plagas'],
+  'Pintura': ['Pintura interior', 'Pintura exterior', 'Pintura decorativa', 'Empapelado', 'Texturizado', 'Restauración'],
+  'Cerrajería': ['Cambio de cerraduras', 'Apertura de puertas', 'Llaves duplicadas', 'Cerraduras digitales', 'Rejas de seguridad', 'Emergencias 24/7'],
+  'Albañilería': ['Construcción', 'Remodelaciones', 'Mampostería', 'Pisos y azulejos', 'Reparaciones', 'Acabados'],
+  'Muebles y Decoración': ['Fabricación de muebles', 'Diseño a medida', 'Restauración', 'Instalación', 'Decoración de interiores', 'Tapicería'],
+  'Electrodomésticos': ['Reparación de neveras', 'Lavadoras y secadoras', 'Cocinas y hornos', 'Aires acondicionados', 'Mantenimiento', 'Instalación'],
+  'Materiales de Construcción': ['Venta de materiales', 'Asesoría técnica', 'Entrega a domicilio', 'Materiales especializados', 'Presupuestos', 'Mayoreo']
 }
 
 export default function EnhancedProviderRegistration() {
@@ -152,6 +159,71 @@ export default function EnhancedProviderRegistration() {
   const updateFormData = (field: keyof FormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }))
     updateCompletionPercentage()
+  }
+
+  // Smart validation functions
+  const validateRucCedula = (value: string) => {
+    const len = value.length
+    if (len === 10) {
+      return { text: '✓ Cédula válida', color: 'text-green-600', bgColor: 'bg-green-50', borderColor: 'border-green-300' }
+    } else if (len === 13) {
+      return { text: '✓ RUC válido', color: 'text-green-600', bgColor: 'bg-green-50', borderColor: 'border-green-300' }
+    } else if (len < 10 && len > 0) {
+      return { 
+        text: `Faltan ${10 - len} dígitos para Cédula`, 
+        color: 'text-orange-600', 
+        bgColor: 'bg-orange-50', 
+        borderColor: 'border-orange-300'
+      }
+    } else if (len > 10 && len < 13) {
+      return { 
+        text: `Faltan ${13 - len} dígitos para RUC`, 
+        color: 'text-orange-600', 
+        bgColor: 'bg-orange-50', 
+        borderColor: 'border-orange-300'
+      }
+    } else if (len > 13) {
+      return { text: 'Máximo 13 dígitos', color: 'text-red-600', bgColor: 'bg-red-50', borderColor: 'border-red-300' }
+    }
+    return { text: 'Ingresa Cédula (10 dígitos) o RUC (13 dígitos)', color: 'text-gray-500', bgColor: '', borderColor: 'border-gray-300' }
+  }
+
+  const handleRucCedulaChange = (value: string) => {
+    const cleaned = value.replace(/\D/g, '').slice(0, 13)
+    updateFormData('rucCedula', cleaned)
+  }
+
+  const handlePhoneChange = (value: string) => {
+    // Remove country code and format
+    let cleaned = value.replace(/^\+593\s?/, '').replace(/\D/g, '')
+    
+    // Format as user types: 9 1234 5678
+    if (cleaned.length > 1) {
+      cleaned = cleaned.slice(0, 1) + ' ' + 
+                cleaned.slice(1, 5) + ' ' + 
+                cleaned.slice(5, 9)
+    }
+    
+    updateFormData('phone', cleaned.slice(0, 11)) // Max length with spaces
+  }
+
+  const validatePhone = (value: string) => {
+    const numbers = value.replace(/\D/g, '')
+    if (numbers.length === 9 && numbers.startsWith('9')) {
+      return { text: '✓ Número válido', color: 'text-green-600' }
+    } else if (numbers.length > 0) {
+      return { text: `Faltan ${9 - numbers.length} dígitos`, color: 'text-orange-600' }
+    }
+    return { text: 'Formato: 9 XXXX XXXX', color: 'text-gray-500' }
+  }
+
+  const validateDescription = (text: string) => {
+    if (text.length >= 50) {
+      return { text: `${text.length}/500 caracteres ✓ Mínimo alcanzado`, color: 'text-green-600' }
+    } else if (text.length > 0) {
+      return { text: `${text.length}/500 - Mínimo 50 caracteres (faltan ${50 - text.length})`, color: 'text-orange-600' }
+    }
+    return { text: '0/500 - Mínimo 50 caracteres', color: 'text-gray-500' }
   }
 
   const updateCompletionPercentage = () => {
@@ -448,14 +520,21 @@ export default function EnhancedProviderRegistration() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       RUC/Cédula *
                     </label>
-                    <input
-                      type="text"
-                      value={formData.rucCedula}
-                      onChange={(e) => updateFormData('rucCedula', e.target.value)}
-                      placeholder="1234567890"
-                      maxLength={13}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    />
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={formData.rucCedula}
+                        onChange={(e) => handleRucCedulaChange(e.target.value)}
+                        placeholder="1234567890"
+                        maxLength={13}
+                        className={`w-full px-4 py-3 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${
+                          validateRucCedula(formData.rucCedula).borderColor
+                        } ${validateRucCedula(formData.rucCedula).bgColor}`}
+                      />
+                      <div className={`text-xs mt-1 ${validateRucCedula(formData.rucCedula).color}`}>
+                        {validateRucCedula(formData.rucCedula).text}
+                      </div>
+                    </div>
                   </div>
 
                   <div className="flex items-center pt-8">
@@ -482,21 +561,34 @@ export default function EnhancedProviderRegistration() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Teléfono/WhatsApp *
                     </label>
-                    <input
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) => updateFormData('phone', e.target.value)}
-                      placeholder="+593 91234 5678"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    />
-                    <div className="flex items-center mt-2">
+                    <div className="relative">
+                      <div className="flex">
+                        <div className="flex items-center px-3 py-3 bg-gray-50 border border-r-0 border-gray-300 rounded-l-xl text-gray-600 font-medium">
+                          +593
+                        </div>
+                        <input
+                          type="tel"
+                          value={formData.phone}
+                          onChange={(e) => handlePhoneChange(e.target.value)}
+                          placeholder="9 1234 5678"
+                          className="flex-1 px-4 py-3 border border-gray-300 rounded-r-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        />
+                      </div>
+                      <div className={`text-xs mt-1 ${validatePhone(formData.phone).color}`}>
+                        {validatePhone(formData.phone).text}
+                      </div>
+                    </div>
+                    <div className="flex items-center mt-3">
                       <input
                         type="checkbox"
                         checked={formData.whatsappActive}
                         onChange={(e) => updateFormData('whatsappActive', e.target.checked)}
-                        className="mr-2"
+                        className="mr-2 w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500"
                       />
-                      <label className="text-sm text-gray-700">WhatsApp activo para clientes</label>
+                      <label className="text-sm text-gray-700 flex items-center gap-1">
+                        <span className="text-green-600">📱</span>
+                        WhatsApp activo para clientes
+                      </label>
                     </div>
                   </div>
 
@@ -548,28 +640,55 @@ export default function EnhancedProviderRegistration() {
 
                   {formData.category && specialtiesByCategory[formData.category] && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-3">
                         Especialidades (selecciona hasta 3) *
                       </label>
-                      <div className="grid md:grid-cols-2 gap-2">
-                        {specialtiesByCategory[formData.category].map(specialty => (
-                          <label key={specialty} className="flex items-center">
-                            <input
-                              type="checkbox"
-                              checked={formData.specialties.includes(specialty)}
-                              onChange={(e) => {
-                                if (e.target.checked && formData.specialties.length < 3) {
-                                  updateFormData('specialties', [...formData.specialties, specialty])
-                                } else if (!e.target.checked) {
-                                  updateFormData('specialties', formData.specialties.filter(s => s !== specialty))
-                                }
-                              }}
-                              disabled={!formData.specialties.includes(specialty) && formData.specialties.length >= 3}
-                              className="mr-2"
-                            />
-                            <span className="text-sm">{specialty}</span>
-                          </label>
-                        ))}
+                      <div className="space-y-2">
+                        <div className="text-xs text-gray-500 mb-3">
+                          {formData.specialties.length}/3 especialidades seleccionadas
+                        </div>
+                        <div className="grid md:grid-cols-2 gap-3">
+                          {specialtiesByCategory[formData.category].map(specialty => {
+                            const isSelected = formData.specialties.includes(specialty)
+                            const isDisabled = !isSelected && formData.specialties.length >= 3
+                            
+                            return (
+                              <label 
+                                key={specialty} 
+                                className={`flex items-center p-3 rounded-lg border cursor-pointer transition-all ${
+                                  isSelected 
+                                    ? 'bg-purple-50 border-purple-300 text-purple-900' 
+                                    : isDisabled 
+                                      ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed'
+                                      : 'bg-white border-gray-200 hover:border-purple-200 hover:bg-purple-25'
+                                }`}
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={isSelected}
+                                  onChange={(e) => {
+                                    if (e.target.checked && formData.specialties.length < 3) {
+                                      updateFormData('specialties', [...formData.specialties, specialty])
+                                    } else if (!e.target.checked) {
+                                      updateFormData('specialties', formData.specialties.filter(s => s !== specialty))
+                                    }
+                                  }}
+                                  disabled={isDisabled}
+                                  className="mr-3 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                                />
+                                <span className="text-sm font-medium">{specialty}</span>
+                                {isSelected && (
+                                  <span className="ml-auto text-purple-600">✓</span>
+                                )}
+                              </label>
+                            )
+                          })}
+                        </div>
+                        {formData.specialties.length === 3 && (
+                          <div className="text-xs text-green-600 bg-green-50 p-2 rounded-lg">
+                            ✓ Perfecto! Has seleccionado 3 especialidades
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
@@ -602,16 +721,21 @@ export default function EnhancedProviderRegistration() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Describe tu experiencia y servicios *
                   </label>
-                  <textarea
-                    value={formData.description}
-                    onChange={(e) => updateFormData('description', e.target.value)}
-                    placeholder="Plomero profesional con 6 años de experiencia. Especializado en reparaciones e instalaciones. Trabajo garantizado, presupuesto sin costo. Atención rápida y profesional."
-                    rows={4}
-                    maxLength={500}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  />
-                  <div className="text-right text-sm text-gray-500 mt-1">
-                    {formData.description.length}/500 caracteres
+                  <div className="relative">
+                    <textarea
+                      value={formData.description}
+                      onChange={(e) => updateFormData('description', e.target.value)}
+                      placeholder="Plomero profesional con 6 años de experiencia. Especializado en reparaciones e instalaciones. Trabajo garantizado, presupuesto sin costo. Atención rápida y profesional."
+                      rows={4}
+                      maxLength={500}
+                      className={`w-full px-4 py-3 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none ${
+                        formData.description.length >= 50 ? 'border-green-300 bg-green-50' : 
+                        formData.description.length > 0 ? 'border-orange-300 bg-orange-50' : 'border-gray-300'
+                      }`}
+                    />
+                    <div className={`text-xs mt-1 ${validateDescription(formData.description).color}`}>
+                      {validateDescription(formData.description).text}
+                    </div>
                   </div>
                 </div>
               </div>
