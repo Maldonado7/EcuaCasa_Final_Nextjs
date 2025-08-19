@@ -1,15 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { useClerkSafe } from '../hooks/useClerkSafe'
+import { useUser } from '@clerk/nextjs'
 import { useTranslation } from '../context/TranslationContext'
 import Link from 'next/link'
 import { CheckCircle, Camera, FileText, Award, Briefcase } from 'lucide-react'
 import UploadThingImageUpload from './UploadThingImageUpload'
 
 export default function EnhancedProviderRegistrationForm() {
-  const { useUser } = useClerkSafe()
-  const { user, isSignedIn } = useUser()
+  const { user, isSignedIn, isLoaded } = useUser()
   const { t } = useTranslation()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
@@ -163,6 +162,20 @@ export default function EnhancedProviderRegistrationForm() {
     }
   }
 
+  // Show loading state while Clerk loads
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg mx-auto mb-4 animate-pulse">
+            EC
+          </div>
+          <p className="text-gray-600">Cargando...</p>
+        </div>
+      </div>
+    )
+  }
+
   if (!isSignedIn || !user) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -176,13 +189,15 @@ export default function EnhancedProviderRegistrationForm() {
           <div className="flex gap-4 justify-center">
             <Link 
               href="/sign-up"
-              className="bg-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-purple-700 transition-colors"
+              className="inline-block bg-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-purple-700 transition-colors text-center"
+              onClick={() => console.log('Crear Cuenta clicked')}
             >
               Crear Cuenta
             </Link>
             <Link 
               href="/sign-in?redirect_url=/providers/register"
-              className="bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-colors"
+              className="inline-block bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-colors text-center"
+              onClick={() => console.log('Ya tengo cuenta clicked')}
             >
               Ya tengo cuenta
             </Link>
