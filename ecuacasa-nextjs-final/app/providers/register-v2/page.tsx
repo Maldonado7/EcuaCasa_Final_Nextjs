@@ -19,7 +19,6 @@ import {
   ArrowLeft,
   Save
 } from 'lucide-react'
-import UploadThingImageUpload from '../../components/UploadThingImageUpload'
 
 interface FormData {
   // Step 1: Basic Info
