@@ -25,7 +25,9 @@ export default function UploadThingImageUpload({
   const [isUploading, setIsUploading] = useState(false)
 
   const handleUploadComplete = (res: any[]) => {
-    const urls = res.map(file => file.fileUrl)
+    console.log('Upload completed:', res)
+    const urls = res.map(file => file.fileUrl || file.url)
+    console.log('Extracted URLs:', urls)
     const newFiles = [...uploadedFiles, ...urls]
     setUploadedFiles(newFiles)
     onUploadComplete?.(newFiles)
@@ -33,9 +35,20 @@ export default function UploadThingImageUpload({
   }
 
   const handleUploadError = (error: Error) => {
-    console.error('Upload error:', error)
+    console.error('Upload error details:', error)
     setIsUploading(false)
-    alert('Error al subir las imágenes. Por favor intenta de nuevo.')
+    
+    // More specific error message
+    let errorMessage = 'Error al subir las imágenes.'
+    if (error.message.includes('UNAUTHORIZED')) {
+      errorMessage = 'Error de autorización. Por favor recarga la página e intenta de nuevo.'
+    } else if (error.message.includes('FILE_SIZE')) {
+      errorMessage = 'El archivo es demasiado grande. Máximo 4MB por imagen.'
+    } else if (error.message.includes('FILE_TYPE')) {
+      errorMessage = 'Tipo de archivo no permitido. Solo se permiten imágenes JPG, PNG y WebP.'
+    }
+    
+    alert(errorMessage + ' Detalles: ' + error.message)
   }
 
   const removeImage = (urlToRemove: string) => {
@@ -108,7 +121,10 @@ export default function UploadThingImageUpload({
             endpoint={endpoint}
             onClientUploadComplete={handleUploadComplete}
             onUploadError={handleUploadError}
-            onUploadBegin={() => setIsUploading(true)}
+            onUploadBegin={() => {
+              console.log('Upload beginning for endpoint:', endpoint)
+              setIsUploading(true)
+            }}
             appearance={{
               container: "w-full border-none p-8",
               uploadIcon: "text-purple-600 mb-4",
