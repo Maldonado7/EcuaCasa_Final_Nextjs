@@ -1360,8 +1360,19 @@ export default function EnhancedProviderRegistration() {
               </div>
 
               {/* Invoice Options */}
-              <div className="space-y-6">
-                <h3 className="text-lg font-semibold text-gray-900">📄 Facturación</h3>
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-gray-100 rounded-lg">
+                    <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">📄 Facturación</h3>
+                    <p className="text-sm text-gray-600">Tipo de comprobantes que emites</p>
+                  </div>
+                </div>
+                
                 <div className="space-y-3">
                   {[
                     { value: 'ruc_invoice', label: 'Emito factura con RUC', desc: 'Documentos fiscales válidos' },
@@ -1390,6 +1401,105 @@ export default function EnhancedProviderRegistration() {
                       </div>
                     </label>
                   ))}
+                </div>
+              </div>
+
+              {/* Service List (Optional) */}
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-blue-100 rounded-lg">
+                    <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">💼 Lista de Servicios (Opcional)</h3>
+                    <p className="text-sm text-gray-600">Detalla tus servicios más comunes y sus precios</p>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  {formData.serviceList && formData.serviceList.length > 0 ? (
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-3 gap-4 text-sm font-medium text-gray-700 pb-2 border-b">
+                        <span>Servicio</span>
+                        <span>Precio desde</span>
+                        <span></span>
+                      </div>
+                      
+                      {formData.serviceList.map((service, index) => (
+                        <div key={index} className="grid grid-cols-3 gap-4 items-center p-3 bg-gray-50 rounded-lg">
+                          <input
+                            type="text"
+                            value={service.service}
+                            onChange={(e) => {
+                              const newServices = [...formData.serviceList];
+                              newServices[index].service = e.target.value;
+                              updateFormData('serviceList', newServices);
+                            }}
+                            placeholder="Ej: Impermeabilización completa"
+                            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                          />
+                          <div className="flex items-center">
+                            <span className="text-gray-500 mr-1">$</span>
+                            <input
+                              type="number"
+                              value={service.price}
+                              onChange={(e) => {
+                                const newServices = [...formData.serviceList];
+                                newServices[index].price = parseFloat(e.target.value) || 0;
+                                updateFormData('serviceList', newServices);
+                              }}
+                              placeholder="150"
+                              min="0"
+                              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                            />
+                            <span className="text-gray-500 ml-1">USD</span>
+                          </div>
+                          <button
+                            onClick={() => {
+                              const newServices = formData.serviceList.filter((_, i) => i !== index);
+                              updateFormData('serviceList', newServices);
+                            }}
+                            className="text-red-600 hover:text-red-800 text-sm px-2 py-1 rounded"
+                          >
+                            Eliminar
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      <div className="text-4xl mb-2">📋</div>
+                      <p className="text-sm">No has agregado servicios específicos aún</p>
+                    </div>
+                  )}
+
+                  <button
+                    onClick={() => {
+                      const newService = { service: '', price: 0 };
+                      const currentServices = formData.serviceList || [];
+                      updateFormData('serviceList', [...currentServices, newService]);
+                    }}
+                    className="w-full px-4 py-3 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium"
+                  >
+                    + Agregar servicio
+                  </button>
+
+                  <div className="p-4 bg-blue-50 rounded-lg">
+                    <div className="flex items-center gap-2 text-blue-700">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span className="text-sm font-medium">Consejos para tu lista de servicios</span>
+                    </div>
+                    <ul className="text-sm text-blue-600 mt-2 space-y-1">
+                      <li>• Lista tus servicios más demandados primero</li>
+                      <li>• Usa precios "desde" para dar flexibilidad</li>
+                      <li>• Incluye 3-6 servicios principales</li>
+                      <li>• Los clientes valoran la transparencia en precios</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
 
