@@ -502,19 +502,19 @@ export default function EnhancedProviderRegistration() {
     }
   }
 
-  // Loading state
-  if (!isLoaded) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg mx-auto mb-4 animate-pulse">
-            EC
-          </div>
-          <p className="text-gray-600">Cargando...</p>
-        </div>
-      </div>
-    )
-  }
+  // Loading state - temporarily disabled to show form
+  // if (!isLoaded) {
+  //   return (
+  //     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+  //       <div className="text-center">
+  //         <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg mx-auto mb-4 animate-pulse">
+  //           EC
+  //         </div>
+  //         <p className="text-gray-600">Cargando...</p>
+  //       </div>
+  //     </div>
+  //   )
+  // }
 
   // Not signed in
   if (!isSignedIn || !user) {
@@ -648,7 +648,7 @@ export default function EnhancedProviderRegistration() {
 
       {/* Form Content */}
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 backdrop-blur-sm">
           
           {/* Step 1: Basic Information */}
           {currentStep === 1 && (
@@ -675,7 +675,7 @@ export default function EnhancedProviderRegistration() {
                       value={formData.name}
                       onChange={(e) => updateFormData('name', e.target.value)}
                       placeholder="Carlos Test"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm"
                     />
                   </div>
 
@@ -755,7 +755,7 @@ export default function EnhancedProviderRegistration() {
                     </label>
                     <div className="relative">
                       <div className="flex">
-                        <div className="flex items-center px-3 py-3 bg-gray-50 border border-r-0 border-gray-300 rounded-l-xl text-gray-600 font-medium">
+                        <div className="flex items-center px-3 py-3 bg-gray-50 border border-r-0 border-gray-300 rounded-l-xl text-gray-800 font-medium">
                           +593
                         </div>
                         <input
@@ -763,7 +763,7 @@ export default function EnhancedProviderRegistration() {
                           value={formData.phone}
                           onChange={(e) => handlePhoneChange(e.target.value)}
                           placeholder="9 1234 5678"
-                          className="flex-1 px-4 py-3 border border-gray-300 rounded-r-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                          className="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-r-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm"
                         />
                       </div>
                       <div className={`text-xs mt-1 flex items-center gap-1 ${validatePhone(formData.phone).color}`}>
@@ -794,7 +794,7 @@ export default function EnhancedProviderRegistration() {
                       value={formData.phoneSecondary}
                       onChange={(e) => updateFormData('phoneSecondary', e.target.value)}
                       placeholder="+593 _________"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm"
                     />
                   </div>
                 </div>
@@ -818,7 +818,7 @@ export default function EnhancedProviderRegistration() {
                         updateFormData('category', e.target.value)
                         updateFormData('specialties', []) // Reset specialties when category changes
                       }}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm"
                     >
                       <option value="">Selecciona una categoría</option>
                       {Object.entries(serviceCategories).map(([group, services]) => (
@@ -922,7 +922,7 @@ export default function EnhancedProviderRegistration() {
                     <select
                       value={formData.experienceYears}
                       onChange={(e) => updateFormData('experienceYears', parseInt(e.target.value))}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm"
                     >
                       {[...Array(20)].map((_, i) => (
                         <option key={i + 1} value={i + 1}>{i + 1} año{i === 0 ? '' : 's'}</option>

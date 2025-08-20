@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     const providerData = await request.json()
     console.log('Received comprehensive provider data:', JSON.stringify(providerData, null, 2))
 
-    // Validate required fields - STRICT validation, no fallbacks
+    // Validate required fields - v2 comprehensive validation
     const requiredFields = ['name', 'service_type', 'phone', 'account_type', 'ruc_cedula']
     const missingFields = requiredFields.filter(field => !providerData[field])
     
