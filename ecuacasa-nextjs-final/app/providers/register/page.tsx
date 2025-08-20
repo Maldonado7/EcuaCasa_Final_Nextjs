@@ -516,35 +516,35 @@ export default function EnhancedProviderRegistration() {
   //   )
   // }
 
-  // Not signed in
-  if (!isSignedIn || !user) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
-            Necesitas crear una cuenta
-          </h1>
-          <p className="text-gray-600 mb-6">
-            Para registrarte como profesional, primero debes crear una cuenta gratuita.
-          </p>
-          <div className="flex gap-4 justify-center">
-            <Link 
-              href="/sign-up"
-              className="inline-block bg-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-purple-700 transition-colors text-center"
-            >
-              Crear Cuenta
-            </Link>
-            <Link 
-              href="/sign-in?redirect_url=/providers/register-v2"
-              className="inline-block bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-colors text-center"
-            >
-              Ya tengo cuenta
-            </Link>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  // Not signed in - temporarily disabled to show form
+  // if (!isSignedIn || !user) {
+  //   return (
+  //     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+  //       <div className="text-center">
+  //         <h1 className="text-2xl font-bold text-gray-900 mb-4">
+  //           Necesitas crear una cuenta
+  //         </h1>
+  //         <p className="text-gray-600 mb-6">
+  //           Para registrarte como profesional, primero debes crear una cuenta gratuita.
+  //         </p>
+  //         <div className="flex gap-4 justify-center">
+  //           <Link 
+  //             href="/sign-up"
+  //             className="inline-block bg-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-purple-700 transition-colors text-center"
+  //           >
+  //             Crear Cuenta
+  //           </Link>
+  //           <Link 
+  //             href="/sign-in?redirect_url=/providers/register-v2"
+  //             className="inline-block bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-colors text-center"
+  //           >
+  //             Ya tengo cuenta
+  //           </Link>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   )
+  // }
 
   // Success state
   if (isSuccess) {
