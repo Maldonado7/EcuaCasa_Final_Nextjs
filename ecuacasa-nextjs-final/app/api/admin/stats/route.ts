@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { isUserAdmin } from '../../../lib/adminAuth'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseUrl = process.env.NEXT_SERVICE_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
 const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
