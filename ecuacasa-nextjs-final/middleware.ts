@@ -17,12 +17,7 @@ export default clerkMiddleware((auth, req) => {
   const url = req.nextUrl
   const hostname = req.headers.get('host') || ''
   
-  // Handle non-www to www redirect for production
-  if (process.env.NODE_ENV === 'production' && !hostname.startsWith('www.') && !hostname.includes('localhost')) {
-    const newUrl = new URL(url.toString())
-    newUrl.host = 'www.' + hostname
-    return NextResponse.redirect(newUrl, 301) // Permanent redirect
-  }
+  // Let Vercel handle domain redirects - don't interfere
   
   if (!isPublicRoute(req)) {
     // Protect routes that are not public
