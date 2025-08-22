@@ -112,6 +112,9 @@ export default function TranslatedHomePage({ providers, services, stats }: Trans
               <Link href="/providers" className="text-gray-700 hover:text-gray-900 font-medium">
                 {t('nav.providers')}
               </Link>
+              <Link href="/blog" className="text-gray-700 hover:text-gray-900 font-medium">
+                Blog
+              </Link>
               <Link href="/how" className="text-gray-700 hover:text-gray-900 font-medium">
                 {t('nav.how')}
               </Link>
@@ -385,6 +388,78 @@ export default function TranslatedHomePage({ providers, services, stats }: Trans
                 </div>
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Blog Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4">
+              Consejos y Guías para tu Hogar
+            </h2>
+            <p className="text-xl text-gray-600 mb-8">
+              Aprende con nuestros expertos y mantén tu hogar en perfecto estado
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            <Link href="/blog/como-elegir-plomero-cuenca" className="group">
+              <article className="bg-gray-50 rounded-2xl p-6 hover:shadow-xl transition-all cursor-pointer h-full">
+                <div className="text-4xl mb-4">🔧</div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-purple-600">
+                  Cómo Elegir el Mejor Plomero en Cuenca
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  Guía completa con criterios esenciales, precios y tips para contratar un plomero confiable.
+                </p>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-purple-600 font-medium">Plomería</span>
+                  <span className="text-gray-500">5 min</span>
+                </div>
+              </article>
+            </Link>
+
+            <Link href="/blog/mantenimiento-electrico-hogar" className="group">
+              <article className="bg-gray-50 rounded-2xl p-6 hover:shadow-xl transition-all cursor-pointer h-full">
+                <div className="text-4xl mb-4">⚡</div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-purple-600">
+                  10 Consejos de Mantenimiento Eléctrico
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  Mantén tu sistema eléctrico seguro y evita accidentes con estos consejos preventivos.
+                </p>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-purple-600 font-medium">Electricidad</span>
+                  <span className="text-gray-500">7 min</span>
+                </div>
+              </article>
+            </Link>
+
+            <Link href="/blog/precios-servicios-hogar-cuenca-2025" className="group">
+              <article className="bg-gray-50 rounded-2xl p-6 hover:shadow-xl transition-all cursor-pointer h-full">
+                <div className="text-4xl mb-4">💰</div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-purple-600">
+                  Precios de Servicios para el Hogar 2025
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  Guía actualizada de precios para servicios domésticos en Cuenca.
+                </p>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-purple-600 font-medium">Precios</span>
+                  <span className="text-gray-500">6 min</span>
+                </div>
+              </article>
+            </Link>
+          </div>
+
+          <div className="text-center">
+            <Link href="/blog">
+              <button className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:shadow-xl transition-all">
+                Ver Todos los Artículos
+              </button>
+            </Link>
           </div>
         </div>
       </section>

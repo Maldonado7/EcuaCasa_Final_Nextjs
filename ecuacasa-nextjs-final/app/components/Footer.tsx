@@ -26,15 +26,31 @@ export default function Footer() {
     { name: 'Todos los Servicios', href: '/services' },
     { name: 'Profesionales Verificados', href: '/providers' },
     { name: 'Registro Profesionales', href: '/providers/register' },
-    { name: 'Preguntas Frecuentes', href: '/how#faq' },
-    { name: 'Garantía de Servicio', href: '/how#garantia' },
+    { name: 'Blog y Consejos', href: '/blog' },
+    { name: 'Contacto', href: '/contact' },
+  ]
+
+  const servicePages = [
+    { name: 'Plomería en Cuenca', href: '/servicios/plomeria' },
+    { name: 'Electricidad en Cuenca', href: '/servicios/electricidad' },
+    { name: 'Carpintería en Cuenca', href: '/servicios/carpinteria' },
+    { name: 'Pintura en Cuenca', href: '/servicios/pintura' },
+    { name: 'Limpieza en Cuenca', href: '/servicios/limpieza' },
+    { name: 'Jardinería en Cuenca', href: '/servicios/jardineria' },
+  ]
+
+  const blogLinks = [
+    { name: 'Cómo Elegir Plomero', href: '/blog/como-elegir-plomero-cuenca' },
+    { name: 'Mantenimiento Eléctrico', href: '/blog/mantenimiento-electrico-hogar' },
+    { name: 'Precios de Servicios 2025', href: '/blog/precios-servicios-hogar-cuenca-2025' },
+    { name: 'Guías y Consejos', href: '/blog' },
   ]
 
   return (
     <footer className="bg-gray-900 text-white">
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           
           {/* Company Info */}
           <div>
@@ -62,28 +78,55 @@ export default function Footer() {
 
           {/* Popular Services */}
           <div>
-            <h3 className="font-bold text-lg mb-4">Servicios en Cuenca</h3>
-            <div className="grid grid-cols-2 gap-2">
+            <h3 className="font-bold text-lg mb-4">Buscar Profesionales</h3>
+            <ul className="space-y-2">
               {popularServices.slice(0, 6).map((service) => (
-                <Link key={service.name} href={service.href} className="text-gray-400 hover:text-white text-sm transition-colors">
-                  {service.name.replace(' en Cuenca', '')}
-                </Link>
+                <li key={service.name}>
+                  <Link href={service.href} className="text-gray-400 hover:text-white text-sm transition-colors">
+                    {service.name.replace(' en Cuenca', '')}
+                  </Link>
+                </li>
               ))}
-            </div>
+            </ul>
+            <Link href="/providers" className="text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors mt-4 inline-block">
+              Ver todos los profesionales →
+            </Link>
+          </div>
+
+          {/* Service Pages */}
+          <div>
+            <h3 className="font-bold text-lg mb-4">Servicios en Cuenca</h3>
+            <ul className="space-y-2">
+              {servicePages.map((service) => (
+                <li key={service.name}>
+                  <Link href={service.href} className="text-gray-400 hover:text-white text-sm transition-colors">
+                    {service.name.replace(' en Cuenca', '')}
+                  </Link>
+                </li>
+              ))}
+            </ul>
             <Link href="/services" className="text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors mt-4 inline-block">
               Ver todos los servicios →
             </Link>
           </div>
 
-          {/* Links */}
+          {/* Blog & Resources */}
           <div>
-            <h3 className="font-bold text-lg mb-4">EcuaCasa</h3>
+            <h3 className="font-bold text-lg mb-4">Blog y Recursos</h3>
             <ul className="space-y-2">
-              <li><Link href="/how" className="text-gray-400 hover:text-white text-sm transition-colors">Cómo Funciona</Link></li>
-              <li><Link href="/providers" className="text-gray-400 hover:text-white text-sm transition-colors">Profesionales</Link></li>
-              <li><Link href="/providers/register" className="text-gray-400 hover:text-white text-sm transition-colors">Registro Profesionales</Link></li>
-              <li><Link href="/contact" className="text-gray-400 hover:text-white text-sm transition-colors">Contacto</Link></li>
+              {blogLinks.map((blog) => (
+                <li key={blog.name}>
+                  <Link href={blog.href} className="text-gray-400 hover:text-white text-sm transition-colors">
+                    {blog.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
+            <div className="space-y-2 mt-4">
+              <Link href="/how" className="text-gray-400 hover:text-white text-sm transition-colors block">Cómo Funciona</Link>
+              <Link href="/providers/register" className="text-gray-400 hover:text-white text-sm transition-colors block">Registro Profesionales</Link>
+              <Link href="/contact" className="text-gray-400 hover:text-white text-sm transition-colors block">Contacto</Link>
+            </div>
           </div>
         </div>
       </div>
