@@ -1,55 +1,58 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  // Use environment variable or default to main domain without www
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ecuacasa.com'
+  // Use environment variable or default to www version
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.ecuacasa.com'
+  
+  // Ensure the base URL doesn't have trailing slashes or line breaks
+  const cleanBaseUrl = baseUrl.trim().replace(/\/$/, '')
   
   // Main pages
   const routes = [
     {
-      url: baseUrl,
+      url: cleanBaseUrl,
       lastModified: new Date(),
       changeFrequency: 'daily' as const,
       priority: 1,
     },
     {
-      url: `${baseUrl}/providers`,
+      url: `${cleanBaseUrl}/providers`,
       lastModified: new Date(),
       changeFrequency: 'daily' as const,
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/services`,
+      url: `${cleanBaseUrl}/services`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/how`,
+      url: `${cleanBaseUrl}/how`,
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/providers/register`,
+      url: `${cleanBaseUrl}/providers/register`,
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/contact`,
+      url: `${cleanBaseUrl}/contact`,
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
       priority: 0.6,
     },
     {
-      url: `${baseUrl}/privacy`,
+      url: `${cleanBaseUrl}/privacy`,
       lastModified: new Date(),
       changeFrequency: 'yearly' as const,
       priority: 0.3,
     },
     {
-      url: `${baseUrl}/terms`,
+      url: `${cleanBaseUrl}/terms`,
       lastModified: new Date(),
       changeFrequency: 'yearly' as const,
       priority: 0.3,
@@ -62,12 +65,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'limpieza', 'jardinería', 'cerrajería', 'albañilería'
   ]
 
-  const serviceRoutes = services.map(service => ({
-    url: `${baseUrl}/providers?service=${encodeURIComponent(service)}&location=cuenca`,
-    lastModified: new Date(),
-    changeFrequency: 'daily' as const,
-    priority: 0.8,
-  }))
+  const serviceRoutes = services.map(service => {
+    const encodedService = encodeURIComponent(service.trim())
+    return {
+      url: `${cleanBaseUrl}/providers?service=${encodedService}&location=cuenca`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.8,
+    }
+  })
 
   // Location-specific pages for Cuenca neighborhoods
   const cuencaLocations = [
@@ -77,7 +83,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ]
 
   const locationRoutes = cuencaLocations.map(location => ({
-    url: `${baseUrl}/providers?location=${location}`,
+    url: `${cleanBaseUrl}/providers?location=${location}`,
     lastModified: new Date(),
     changeFrequency: 'daily' as const,
     priority: 0.7,
@@ -85,7 +91,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // Individual provider pages (assuming we have providers with IDs 1-50)
   const providerRoutes = Array.from({ length: 50 }, (_, i) => ({
-    url: `${baseUrl}/providers/${i + 1}`,
+    url: `${cleanBaseUrl}/providers/${i + 1}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.6,
@@ -101,12 +107,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { service: 'jardinería', location: 'cuenca-monay-128' },
     { service: 'cerrajería', location: 'cuenca-el-batán-129' },
     { service: 'albañilería', location: 'cuenca-ricaurte-130' },
-  ].map(({ service, location }) => ({
-    url: `${baseUrl}/providers?service=${encodeURIComponent(service)}&location=${location}`,
-    lastModified: new Date(),
-    changeFrequency: 'daily' as const,
-    priority: 0.7,
-  }))
+  ].map(({ service, location }) => {
+    const encodedService = encodeURIComponent(service.trim())
+    const encodedLocation = location.trim()
+    return {
+      url: `${cleanBaseUrl}/providers?service=${encodedService}&location=${encodedLocation}`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.7,
+    }
+  })
 
   return [
     ...routes,
