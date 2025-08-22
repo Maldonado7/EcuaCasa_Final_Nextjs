@@ -12,15 +12,23 @@ export const metadata = {
   description: 'Encuentra profesionales verificados para tu hogar en Cuenca, Ecuador. Plomeros, electricistas, carpinteros y más.',
   keywords: 'servicios hogar Cuenca, plomeros Cuenca, electricistas Cuenca, carpinteros Cuenca, Ecuador, profesionales verificados',
   robots: 'index, follow',
-  metadataBase: new URL('https://ecuacasa.com'),
+  metadataBase: new URL('https://www.ecuacasa.com'),
+  alternates: {
+    canonical: 'https://www.ecuacasa.com',
+  },
   openGraph: {
     title: 'EcuaCasa - Servicios para el hogar en Cuenca',
     description: 'Encuentra profesionales verificados para tu hogar en Cuenca, Ecuador',
-    url: 'https://ecuacasa.com',
+    url: 'https://www.ecuacasa.com',
     siteName: 'EcuaCasa',
     locale: 'es_EC',
     type: 'website',
   },
+  twitter: {
+    card: 'summary',
+    title: 'EcuaCasa - Servicios para el hogar en Cuenca',
+    description: 'Encuentra profesionales verificados para tu hogar en Cuenca, Ecuador',
+  }
 }
 
 export default function RootLayout({
