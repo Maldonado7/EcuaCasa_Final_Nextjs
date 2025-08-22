@@ -98,7 +98,9 @@ ${allRoutes.map(route => `  <url>
   return new NextResponse(sitemap, {
     headers: {
       'Content-Type': 'application/xml',
-      'Cache-Control': 'public, max-age=0, must-revalidate',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0',
     },
   })
 }
