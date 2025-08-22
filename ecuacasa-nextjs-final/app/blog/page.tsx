@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 
 // Blog posts data (would typically come from CMS or database)
@@ -65,7 +65,8 @@ const blogPosts = [
 
 const categories = ['Todos', 'Plomería', 'Electricidad', 'Carpintería', 'Limpieza', 'Jardinería', 'Precios']
 
-export default function BlogPage() {
+// Component that uses searchParams - needs to be wrapped in Suspense
+function BlogContent() {
   const searchParams = useSearchParams()
   const [selectedCategory, setSelectedCategory] = useState('Todos')
   const [filteredPosts, setFilteredPosts] = useState(blogPosts)
@@ -314,5 +315,20 @@ export default function BlogPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function BlogPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando blog...</p>
+        </div>
+      </div>
+    }>
+      <BlogContent />
+    </Suspense>
   )
 }
