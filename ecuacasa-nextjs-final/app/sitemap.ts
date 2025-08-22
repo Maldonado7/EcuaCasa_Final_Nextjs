@@ -67,10 +67,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const serviceRoutes = services.map(service => {
     const encodedService = encodeURIComponent(service.trim())
-    // XML escape the & character for valid sitemap
-    const url = `${cleanBaseUrl}/providers?service=${encodedService}&location=cuenca`.replace(/&/g, '&amp;')
     return {
-      url,
+      url: `${cleanBaseUrl}/providers?service=${encodedService}&location=cuenca`,
       lastModified: new Date(),
       changeFrequency: 'daily' as const,
       priority: 0.8,
@@ -112,10 +110,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ].map(({ service, location }) => {
     const encodedService = encodeURIComponent(service.trim())
     const encodedLocation = location.trim()
-    // XML escape the & character for valid sitemap
-    const url = `${cleanBaseUrl}/providers?service=${encodedService}&location=${encodedLocation}`.replace(/&/g, '&amp;')
     return {
-      url,
+      url: `${cleanBaseUrl}/providers?service=${encodedService}&location=${encodedLocation}`,
       lastModified: new Date(),
       changeFrequency: 'daily' as const,
       priority: 0.7,
