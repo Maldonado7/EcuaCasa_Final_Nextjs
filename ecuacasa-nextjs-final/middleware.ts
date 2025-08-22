@@ -1,4 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { NextResponse } from 'next/server'
 
 // Allow public access to sign-up routes
 const isPublicRoute = createRouteMatcher([
@@ -13,6 +14,16 @@ const isPublicRoute = createRouteMatcher([
 ])
 
 export default clerkMiddleware((auth, req) => {
+  const url = req.nextUrl
+  const hostname = req.headers.get('host') || ''
+  
+  // Handle www to non-www redirect for production
+  if (hostname.startsWith('www.')) {
+    const newUrl = new URL(url.toString())
+    newUrl.host = hostname.replace('www.', '')
+    return NextResponse.redirect(newUrl, 301) // Permanent redirect
+  }
+  
   if (!isPublicRoute(req)) {
     // Protect routes that are not public
     // But don't use auth().protect() as it was causing issues

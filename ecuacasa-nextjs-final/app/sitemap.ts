@@ -1,7 +1,8 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://ecuacasa.com'
+  // Use environment variable or default to main domain without www
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ecuacasa.com'
   
   // Main pages
   const routes = [
