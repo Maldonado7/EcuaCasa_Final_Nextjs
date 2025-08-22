@@ -1,8 +1,8 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  // Use environment variable or default to www version
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.ecuacasa.com'
+  // Force www version for now (environment variable not working)
+  const baseUrl = 'https://www.ecuacasa.com'
   
   // Ensure the base URL doesn't have trailing slashes or line breaks
   const cleanBaseUrl = baseUrl.trim().replace(/\/$/, '')
