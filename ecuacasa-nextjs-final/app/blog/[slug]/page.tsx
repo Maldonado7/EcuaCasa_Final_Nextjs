@@ -184,6 +184,305 @@ En EcuaCasa verificamos cada profesional y garantizamos calidad en el servicio. 
 
 *¿Te ha sido útil esta guía? Compártela con otros propietarios en Cuenca que puedan necesitar estos consejos.*
     `
+  },
+  'mantenimiento-electrico-hogar': {
+    title: '10 Consejos de Mantenimiento Eléctrico para tu Hogar',
+    excerpt: 'Mantén tu sistema eléctrico seguro con estos consejos preventivos. Evita accidentes y ahorra dinero en reparaciones.',
+    category: 'Electricidad',
+    date: '2025-01-12',
+    readTime: '7 min',
+    keywords: ['mantenimiento eléctrico', 'seguridad eléctrica hogar', 'electricidad doméstica', 'prevención accidentes eléctricos'],
+    relatedServices: ['electricidad'],
+    content: `
+# 10 Consejos de Mantenimiento Eléctrico para tu Hogar
+
+El mantenimiento eléctrico preventivo es fundamental para la seguridad de tu hogar y familia. Siguiendo estos consejos, podrás evitar accidentes y costosas reparaciones.
+
+## ¿Por Qué es Importante el Mantenimiento Eléctrico?
+
+Un sistema eléctrico mal mantenido puede causar:
+- **Incendios domésticos** (40% causados por problemas eléctricos)
+- **Electrocuciones** y accidentes graves
+- **Daños costosos** en electrodomésticos
+- **Consumo excesivo** de energía
+
+## 10 Consejos Esenciales de Mantenimiento
+
+### 1. Inspección Visual Mensual
+- Revisa cables visibles en busca de grietas o desgaste
+- Verifica que no haya cables sueltos o expuestos
+- Observa si hay marcas de quemaduras en enchufes
+
+### 2. Prueba de Interruptores de Circuito
+- Prueba los breakers mensualmente
+- Asegúrate de que se activen correctamente
+- Reemplaza interruptores que no funcionen
+
+### 3. Revisión de Enchufes y Tomacorrientes
+- Verifica que no estén sobrecargados
+- Reemplaza enchufes agrietados o sueltos
+- Instala protectores en enchufes no utilizados
+
+### 4. Mantenimiento de Alargadores
+- Inspecciona cables de extensión regularmente
+- No uses alargadores como solución permanente
+- Reemplaza cables dañados inmediatamente
+
+### 5. Limpieza de Tablero Eléctrico
+- Mantén el área del tablero libre de obstáculos
+- Limpia polvo del tablero con paño seco
+- Etiqueta breakers para fácil identificación
+
+### 6. Verificación de Luces
+- Reemplaza bombillas fundidas inmediatamente
+- Usa vataje correcto según las especificaciones
+- Limpia regularmente luminarias y pantallas
+
+### 7. Prueba de Interruptores GFCI
+- Prueba mensualmente interruptores de baños y cocina
+- Presiona botones "TEST" y "RESET"
+- Llama a electricista si no funcionan correctamente
+
+### 8. Inspección de Electrodomésticos
+- Revisa cables de electrodomésticos mayores
+- Desconecta equipos no utilizados
+- Programa mantenimiento profesional anual
+
+### 9. Control de Humedad
+- Mantén áreas eléctricas secas
+- Instala ventilación adecuada en baños
+- Repara filtraciones que afecten instalaciones eléctricas
+
+### 10. Revisión Profesional Anual
+- Contrata electricista certificado una vez al año
+- Solicita inspección completa del sistema
+- Actualiza instalaciones según normativas vigentes
+
+## Señales de Alerta que Requieren Atención Inmediata
+
+🚨 **Contacta a un electricista si notas:**
+- Chispas al conectar o desconectar aparatos
+- Breakers que se disparan frecuentemente
+- Luces que parpadean sin razón aparente
+- Enchufes calientes al tacto
+- Olor a quemado cerca de instalaciones eléctricas
+- Pequeñas descargas eléctricas al tocar aparatos
+
+## Costos de Mantenimiento Preventivo vs Correctivo
+
+| Tipo de Servicio | Costo Preventivo | Costo Correctivo |
+|------------------|------------------|------------------|
+| Inspección general | $30-50 | $80-150 |
+| Cambio de breaker | $25-40 | $60-100 |
+| Reparación de enchufes | $15-30 | $40-80 |
+| Revisión de tablero | $40-60 | $100-200 |
+
+## Cuándo Llamar a un Profesional
+
+No intentes reparar por ti mismo:
+- **Problemas en el tablero principal**
+- **Instalación de nuevos circuitos**
+- **Reparaciones que requieran cortar energía general**
+- **Cualquier trabajo que no comprendas completamente**
+
+## Kit Básico de Seguridad Eléctrica
+
+Todo hogar debe tener:
+- **Detector de humo** con batería nueva
+- **Extintor** apropiado para fuegos eléctricos
+- **Linterna** con pilas cargadas
+- **Números de emergencia** de electricistas locales
+
+## Conclusion
+
+El mantenimiento eléctrico preventivo es una inversión en la seguridad de tu familia. Dedicar una hora al mes para estas verificaciones básicas puede prevenir tragedias y ahorrarte miles de dólares en reparaciones.
+
+**¿Necesitas un electricista profesional en Cuenca?** En EcuaCasa conectamos con electricistas certificados y verificados disponibles las 24 horas.
+
+### Artículos Relacionados
+- [Guía de Seguridad Eléctrica para Niños](/blog/seguridad-electrica-ninos)
+- [Cómo Reducir tu Factura Eléctrica](/blog/reducir-factura-electrica)
+- [Instalación de Paneles Solares en Cuenca](/blog/paneles-solares-cuenca)
+
+---
+
+*La seguridad eléctrica es responsabilidad de todos. Comparte estos consejos con tus vecinos y familiares.*
+    `
+  },
+  'precios-servicios-hogar-cuenca-2025': {
+    title: 'Precios de Servicios para el Hogar en Cuenca 2025',
+    excerpt: 'Guía actualizada de precios para servicios domésticos en Cuenca. Plomería, electricidad, carpintería y más.',
+    category: 'Precios',
+    date: '2025-01-10',
+    readTime: '6 min',
+    keywords: ['precios servicios Cuenca', 'tarifas hogar Ecuador', 'costos plomería electricidad', 'presupuesto mantenimiento casa'],
+    relatedServices: ['plomeria', 'electricidad', 'carpinteria', 'pintura', 'limpieza'],
+    content: `
+# Precios de Servicios para el Hogar en Cuenca 2025
+
+Planificar el presupuesto para el mantenimiento y mejoras del hogar es esencial. Esta guía te ayudará a conocer los precios actuales de servicios domésticos en Cuenca.
+
+## Tarifas por Servicio
+
+### 🔧 Plomería
+| Servicio | Precio | Incluye |
+|----------|--------|---------|
+| Visita diagnóstica | $15-25 | Evaluación y presupuesto |
+| Destape básico | $25-40 | Desagües y cañerías |
+| Reparación grifo | $20-35 | Mano de obra |
+| Instalación sanitario | $50-80 | Sin incluir sanitario |
+| Hora de trabajo | $25-45 | Mano de obra |
+
+### ⚡ Electricidad
+| Servicio | Precio | Incluye |
+|----------|--------|---------|
+| Inspección eléctrica | $30-50 | Revisión completa |
+| Instalación tomacorriente | $20-35 | Sin incluir materiales |
+| Cambio de breaker | $25-40 | Sin incluir breaker |
+| Instalación luminaria | $30-60 | Mano de obra |
+| Hora de trabajo | $30-50 | Mano de obra |
+
+### 🔨 Carpintería
+| Servicio | Precio | Incluye |
+|----------|--------|---------|
+| Consulta y medición | $20-30 | Diseño inicial |
+| Reparación puertas | $40-80 | Mano de obra |
+| Muebles a medida | $200-500+ | Según diseño |
+| Instalación estanterías | $60-120 | Mano de obra |
+| Hora de trabajo | $35-60 | Mano de obra |
+
+### 🎨 Pintura
+| Servicio | Precio | Incluye |
+|----------|--------|---------|
+| Pintura interior (m²) | $8-15 | Mano de obra |
+| Pintura exterior (m²) | $10-18 | Mano de obra |
+| Empaste y lijado (m²) | $3-6 | Preparación |
+| Consultoría colores | $25-40 | Asesoría profesional |
+| Hora de trabajo | $20-40 | Mano de obra |
+
+### 🧹 Limpieza
+| Servicio | Precio | Incluye |
+|----------|--------|---------|
+| Limpieza básica | $15-25/hora | Una persona |
+| Limpieza profunda | $80-150 | Casa completa |
+| Limpieza post-construcción | $120-250 | Según tamaño |
+| Lavado alfombras (m²) | $5-10 | Productos incluidos |
+
+### 🌱 Jardinería
+| Servicio | Precio | Incluye |
+|----------|--------|---------|
+| Mantenimiento básico | $18-35/hora | Poda y limpieza |
+| Diseño jardín | $100-300 | Según tamaño |
+| Instalación riego | $150-400 | Sin incluir sistema |
+| Siembra plantas | $5-15/planta | Mano de obra |
+
+## Factores que Afectan los Precios
+
+### 🏠 Ubicación en Cuenca
+- **Centro histórico**: +10-15% (dificultad acceso)
+- **Sectores residenciales**: Precios estándar  
+- **Zonas periféricas**: -5-10%
+
+### 📅 Urgencia del Servicio
+- **Horario normal** (8am-6pm): Precio base
+- **Nocturno/fines de semana**: +25-50%
+- **Emergencias**: +50-100%
+
+### 👨‍🔧 Experiencia del Profesional
+- **Técnicos junior**: -15-20%
+- **Profesionales promedio**: Precio base
+- **Expertos/maestros**: +20-40%
+
+## Consejos para Ahorrar
+
+### 💡 Planificación
+- **Agrupa trabajos** del mismo tipo
+- **Programa en temporada baja**
+- **Solicita múltiples presupuestos**
+
+### 🔍 Comparación
+- Pide mínimo **3 presupuestos**
+- Verifica **incluidos y exclusiones**
+- Evalúa **garantías ofrecidas**
+
+### 📋 Preparación
+- **Limpia y despeja** áreas de trabajo
+- **Ten materiales listos** cuando sea posible
+- **Define claramente** el alcance del trabajo
+
+## Señales de Precios Sospechosos
+
+🚨 **Desconfía si:**
+- Precio **excesivamente bajo** (puede indicar mala calidad)
+- Solicitan **pago completo** por adelantado
+- No proporcionan **presupuesto escrito**
+- Evaden dar **referencias verificables**
+- Precios **muy por encima** del promedio sin justificación
+
+## Materiales Comunes y Precios
+
+### 🔧 Plomería
+- Tubo PVC 1/2": $3-5/metro
+- Grifo básico: $15-35
+- Sanitario estándar: $80-180
+
+### ⚡ Electricidad  
+- Cable THHN 12 AWG: $1.50-2.50/metro
+- Tomacorriente doble: $5-12
+- Breaker 20A: $8-15
+
+### 🎨 Pintura
+- Pintura interior (galón): $18-35
+- Pintura exterior (galón): $22-45
+- Masilla para paredes: $8-15
+
+## Estacionalidad de Precios
+
+### 📈 Temporada Alta (Junio-Agosto)
+- Mayor demanda por **vacaciones escolares**
+- Precios **10-20% más altos**
+- Menor disponibilidad de profesionales
+
+### 📉 Temporada Baja (Marzo-Mayo)
+- Menor demanda
+- Mejores **promociones y descuentos**
+- Mayor flexibilidad de horarios
+
+## Formas de Pago Aceptadas
+
+### 💳 Métodos Comunes
+- **Efectivo**: Descuentos 5-10%
+- **Transferencia bancaria**: Sin recargo
+- **Tarjeta de crédito**: Posible recargo 3-5%
+
+### 📋 Modalidades de Pago
+- **50% adelanto, 50% al terminar**: Estándar
+- **Pago completo al finalizar**: Trabajos menores
+- **Pago por etapas**: Proyectos grandes
+
+## Garantías Estándar
+
+### ⭐ Tiempos de Garantía
+- **Plomería**: 6 meses - 1 año
+- **Electricidad**: 6 meses - 2 años
+- **Carpintería**: 1-3 años
+- **Pintura**: 6 meses - 1 año
+
+## Conclusión
+
+Conocer los precios de mercado te ayuda a tomar mejores decisiones y evitar sorpresas. Recuerda que la calidad debe ser prioridad sobre el precio más bajo.
+
+**¿Buscas profesionales confiables a precios justos?** En EcuaCasa verificamos cada profesional y garantizamos precios transparentes sin sorpresas.
+
+### Artículos Relacionados
+- [Cómo Negociar Precios con Profesionales del Hogar](/blog/negociar-precios-servicios)
+- [Presupuesto Anual para Mantenimiento del Hogar](/blog/presupuesto-mantenimiento-anual)
+- [Cuándo Vale la Pena Contratar un Profesional](/blog/cuando-contratar-profesional)
+
+---
+
+*Precios actualizados a enero 2025. Los precios pueden variar según condiciones específicas de cada trabajo.*
+    `
   }
 }
 

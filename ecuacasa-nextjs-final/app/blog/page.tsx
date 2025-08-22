@@ -168,10 +168,24 @@ export default function BlogPage() {
             {regularPosts.map((post) => (
               <Link key={post.id} href={`/blog/${post.id}`}>
                 <article className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all cursor-pointer overflow-hidden">
-                  <div className="h-48 bg-gradient-to-br from-gray-200 to-gray-300 relative">
+                  <div className="h-48 bg-gradient-to-br relative overflow-hidden" style={{
+                    background: post.category === 'Electricidad' ? 'linear-gradient(to bottom right, #fef3c7, #fcd34d)' :
+                               post.category === 'Precios' ? 'linear-gradient(to bottom right, #dcfce7, #86efac)' :
+                               post.category === 'Carpintería' ? 'linear-gradient(to bottom right, #f3e8ff, #c4b5fd)' :
+                               post.category === 'Limpieza' ? 'linear-gradient(to bottom right, #e0f2fe, #7dd3fc)' :
+                               post.category === 'Jardinería' ? 'linear-gradient(to bottom right, #f0fdf4, #bbf7d0)' :
+                               'linear-gradient(to bottom right, #f3f4f6, #d1d5db)'
+                  }}>
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-gray-500 text-4xl">📷</span>
+                      <span className="text-6xl">
+                        {post.category === 'Electricidad' ? '⚡' :
+                         post.category === 'Precios' ? '💰' :
+                         post.category === 'Carpintería' ? '🔨' :
+                         post.category === 'Limpieza' ? '🧹' :
+                         post.category === 'Jardinería' ? '🌱' : '📝'}
+                      </span>
                     </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
                     <div className="absolute top-4 left-4">
                       <span className="bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-medium">
                         {post.category}
