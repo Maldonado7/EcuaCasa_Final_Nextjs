@@ -17,10 +17,10 @@ export default clerkMiddleware((auth, req) => {
   const url = req.nextUrl
   const hostname = req.headers.get('host') || ''
   
-  // Handle www to non-www redirect for production
-  if (hostname.startsWith('www.')) {
+  // Handle non-www to www redirect for production
+  if (process.env.NODE_ENV === 'production' && !hostname.startsWith('www.') && !hostname.includes('localhost')) {
     const newUrl = new URL(url.toString())
-    newUrl.host = hostname.replace('www.', '')
+    newUrl.host = 'www.' + hostname
     return NextResponse.redirect(newUrl, 301) // Permanent redirect
   }
   
