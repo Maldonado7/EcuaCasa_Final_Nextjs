@@ -675,7 +675,8 @@ export default function EnhancedProviderRegistration() {
                       value={formData.name}
                       onChange={(e) => updateFormData('name', e.target.value)}
                       placeholder="Carlos Test"
-                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm"
+                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm text-gray-900"
+                      style={{ color: '#111827', backgroundColor: '#ffffff' }}
                     />
                   </div>
 
@@ -690,7 +691,8 @@ export default function EnhancedProviderRegistration() {
                           value="individual"
                           checked={formData.accountType === 'individual'}
                           onChange={(e) => updateFormData('accountType', e.target.value)}
-                          className="mr-2"
+                          className="mr-2 w-4 h-4 text-purple-600 bg-white border-gray-300 focus:ring-purple-500"
+                          style={{ backgroundColor: '#ffffff' }}
                         />
                         Profesional Independiente
                       </label>
@@ -700,7 +702,8 @@ export default function EnhancedProviderRegistration() {
                           value="business"
                           checked={formData.accountType === 'business'}
                           onChange={(e) => updateFormData('accountType', e.target.value)}
-                          className="mr-2"
+                          className="mr-2 w-4 h-4 text-purple-600 bg-white border-gray-300 focus:ring-purple-500"
+                          style={{ backgroundColor: '#ffffff' }}
                         />
                         Empresa con RUC
                       </label>
@@ -763,7 +766,8 @@ export default function EnhancedProviderRegistration() {
                           value={formData.phone}
                           onChange={(e) => handlePhoneChange(e.target.value)}
                           placeholder="9 1234 5678"
-                          className="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-r-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm"
+                          className="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-r-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm text-gray-900"
+                          style={{ color: '#111827', backgroundColor: '#ffffff' }}
                         />
                       </div>
                       <div className={`text-xs mt-1 flex items-center gap-1 ${validatePhone(formData.phone).color}`}>
@@ -776,7 +780,8 @@ export default function EnhancedProviderRegistration() {
                         type="checkbox"
                         checked={formData.whatsappActive}
                         onChange={(e) => updateFormData('whatsappActive', e.target.checked)}
-                        className="mr-2 w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500"
+                        className="mr-2 w-4 h-4 text-green-600 bg-white border-gray-300 rounded focus:ring-green-500"
+                        style={{ backgroundColor: '#ffffff' }}
                       />
                       <label className="text-sm text-gray-700 flex items-center gap-1">
                         <span className="text-green-600">📱</span>
@@ -794,7 +799,8 @@ export default function EnhancedProviderRegistration() {
                       value={formData.phoneSecondary}
                       onChange={(e) => updateFormData('phoneSecondary', e.target.value)}
                       placeholder="+593 _________"
-                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm"
+                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm text-gray-900"
+                      style={{ color: '#111827', backgroundColor: '#ffffff' }}
                     />
                   </div>
                 </div>
@@ -818,13 +824,14 @@ export default function EnhancedProviderRegistration() {
                         updateFormData('category', e.target.value)
                         updateFormData('specialties', []) // Reset specialties when category changes
                       }}
-                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm"
+                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm text-gray-900"
+                      style={{ color: '#111827', backgroundColor: '#ffffff' }}
                     >
-                      <option value="">Selecciona una categoría</option>
+                      <option value="" style={{ color: '#6b7280', backgroundColor: '#ffffff' }}>Selecciona una categoría</option>
                       {Object.entries(serviceCategories).map(([group, services]) => (
-                        <optgroup key={group} label={group}>
+                        <optgroup key={group} label={group} style={{ color: '#374151', backgroundColor: '#f9fafb' }}>
                           {services.map(service => (
-                            <option key={service} value={service}>{service}</option>
+                            <option key={service} value={service} style={{ color: '#111827', backgroundColor: '#ffffff' }}>{service}</option>
                           ))}
                         </optgroup>
                       ))}
@@ -880,7 +887,8 @@ export default function EnhancedProviderRegistration() {
                                     }
                                   }}
                                   disabled={isDisabled}
-                                  className="mr-3 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                                  className="mr-3 w-4 h-4 text-purple-600 bg-white border-gray-300 rounded focus:ring-purple-500"
+                          style={{ backgroundColor: '#ffffff' }}
                                 />
                                 <div className="flex-1 flex items-center justify-between">
                                   <span className="text-sm font-medium">{specialty.name}</span>
@@ -922,7 +930,8 @@ export default function EnhancedProviderRegistration() {
                     <select
                       value={formData.experienceYears}
                       onChange={(e) => updateFormData('experienceYears', parseInt(e.target.value))}
-                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm"
+                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm text-gray-900"
+                      style={{ color: '#111827', backgroundColor: '#ffffff' }}
                     >
                       {[...Array(20)].map((_, i) => (
                         <option key={i + 1} value={i + 1}>{i + 1} año{i === 0 ? '' : 's'}</option>
@@ -950,10 +959,11 @@ export default function EnhancedProviderRegistration() {
                       placeholder="Plomero profesional con 6 años de experiencia. Especializado en reparaciones e instalaciones. Trabajo garantizado, presupuesto sin costo. Atención rápida y profesional."
                       rows={4}
                       maxLength={500}
-                      className={`w-full px-4 py-3 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none ${
+                      className={`w-full px-4 py-3 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none text-gray-900 ${
                         formData.description.length >= 50 ? 'border-green-300 bg-green-50' : 
-                        formData.description.length > 0 ? 'border-orange-300 bg-orange-50' : 'border-gray-300'
+                        formData.description.length > 0 ? 'border-orange-300 bg-orange-50' : 'border-gray-300 bg-white'
                       }`}
+                      style={{ color: '#111827', backgroundColor: formData.description.length >= 50 ? '#f0fdf4' : formData.description.length > 0 ? '#fff7ed' : '#ffffff' }}
                     />
                     <div className="space-y-2 mt-2">
                       <div className={`text-xs flex items-center gap-1 ${validateDescription(formData.description).color}`}>
@@ -1106,7 +1116,8 @@ export default function EnhancedProviderRegistration() {
                           type="checkbox"
                           checked={formData.freeEstimate}
                           onChange={(e) => updateFormData('freeEstimate', e.target.checked)}
-                          className="mr-3 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                          className="mr-3 w-4 h-4 text-purple-600 bg-white border-gray-300 rounded focus:ring-purple-500"
+                          style={{ backgroundColor: '#ffffff' }}
                         />
                         <label className="text-sm text-gray-700 flex items-center gap-2">
                           <span>🆓</span>
@@ -1121,7 +1132,8 @@ export default function EnhancedProviderRegistration() {
                               type="checkbox"
                               checked={formData.quoteFee > 0}
                               onChange={(e) => updateFormData('quoteFee', e.target.checked ? 10 : 0)}
-                              className="mr-2 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                              className="mr-2 w-4 h-4 text-purple-600 bg-white border-gray-300 rounded focus:ring-purple-500"
+                              style={{ backgroundColor: '#ffffff' }}
                             />
                             <label className="text-sm text-gray-700">Costo por Cotización:</label>
                             <div className="flex items-center gap-1">
@@ -1174,7 +1186,8 @@ export default function EnhancedProviderRegistration() {
                                 updateFormData('paymentMethods', formData.paymentMethods.filter(m => m !== method.value))
                               }
                             }}
-                            className="mr-3 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                            className="mr-3 w-4 h-4 text-purple-600 bg-white border-gray-300 rounded focus:ring-purple-500"
+                          style={{ backgroundColor: '#ffffff' }}
                           />
                           <div className="flex items-center gap-2 flex-1">
                             <span>{method.icon}</span>
@@ -1334,7 +1347,8 @@ export default function EnhancedProviderRegistration() {
                           type="checkbox"
                           checked={formData.hasInsurance}
                           onChange={(e) => updateFormData('hasInsurance', e.target.checked)}
-                          className="mr-3 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                          className="mr-3 w-4 h-4 text-purple-600 bg-white border-gray-300 rounded focus:ring-purple-500"
+                          style={{ backgroundColor: '#ffffff' }}
                         />
                         <div>
                           <div className="flex items-center gap-2">
@@ -1352,7 +1366,8 @@ export default function EnhancedProviderRegistration() {
                           type="checkbox"
                           checked={formData.includesMaterials}
                           onChange={(e) => updateFormData('includesMaterials', e.target.checked)}
-                          className="mr-3 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                          className="mr-3 w-4 h-4 text-purple-600 bg-white border-gray-300 rounded focus:ring-purple-500"
+                          style={{ backgroundColor: '#ffffff' }}
                         />
                         <div>
                           <div className="flex items-center gap-2">
@@ -1370,7 +1385,8 @@ export default function EnhancedProviderRegistration() {
                           type="checkbox"
                           checked={formData.offersContract}
                           onChange={(e) => updateFormData('offersContract', e.target.checked)}
-                          className="mr-3 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                          className="mr-3 w-4 h-4 text-purple-600 bg-white border-gray-300 rounded focus:ring-purple-500"
+                          style={{ backgroundColor: '#ffffff' }}
                         />
                         <div>
                           <div className="flex items-center gap-2">
