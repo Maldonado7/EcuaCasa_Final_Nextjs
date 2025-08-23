@@ -3,73 +3,27 @@
 import Link from 'next/link'
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { getBlogPosts, getAllCategories } from '../data/blog-posts'
 
-// Blog posts data (would typically come from CMS or database)
-const blogPosts = [
-  {
-    id: 'como-elegir-plomero-cuenca',
-    title: 'Cómo Elegir el Mejor Plomero en Cuenca: Guía Completa 2025',
-    excerpt: 'Encuentra al plomero perfecto para tu hogar con nuestra guía detallada. Aprende a verificar licencias, comparar precios justos ($25-45/hora), evaluar experiencia y identificar señales de calidad. Incluye checklist descargable y preguntas clave para hacer antes de contratar.',
-    category: 'Plomería',
-    date: '2025-01-15',
-    readTime: '5 min',
-    image: '/blog/plomero-cuenca.jpg',
-    featured: true
-  },
-  {
-    id: 'mantenimiento-electrico-hogar',
-    title: '10 Consejos de Mantenimiento Eléctrico para tu Hogar',
-    excerpt: 'Protege tu familia y tu inversión con estas 10 reglas de oro del mantenimiento eléctrico. Desde inspecciones mensuales hasta cuándo llamar a un profesional. Incluye señales de alerta, costos promedio de reparaciones en Cuenca y cronograma de mantenimiento preventivo.',
-    category: 'Electricidad',
-    date: '2025-01-12',
-    readTime: '7 min',
-    image: '/blog/electricidad-hogar.jpg'
-  },
-  {
-    id: 'precios-servicios-hogar-cuenca-2025',
-    title: 'Precios de Servicios para el Hogar en Cuenca 2025',
-    excerpt: 'Presupuesta inteligentemente con nuestra guía de precios actualizada para Cuenca. Tarifas por hora, costos de materiales, diferencias entre barrios. Plomería $25-45/h, electricidad $30-50/h, carpintería $20-40/h. Incluye calculadora de presupuesto y tips para negociar.',
-    category: 'Precios',
-    date: '2025-01-10',
-    readTime: '6 min',
-    image: '/blog/precios-servicios.jpg'
-  },
-  {
-    id: 'carpinteria-muebles-medida',
-    title: 'Ventajas de los Muebles a Medida vs Muebles Prefabricados',
-    excerpt: 'Invierte inteligentemente en mobiliario que dure décadas. Comparativa detallada: durabilidad, costos a largo plazo, personalización y valor de reventa. Los muebles a medida cuestan 20-40% más pero duran 3x más tiempo. Incluye guía de maderas locales y mejores carpinteros de Cuenca.',
-    category: 'Carpintería',
-    date: '2025-01-08',
-    readTime: '4 min',
-    image: '/blog/muebles-medida.jpg'
-  },
-  {
-    id: 'limpieza-profunda-casa',
-    title: 'Checklist de Limpieza Profunda para tu Casa',
-    excerpt: 'Transforma tu hogar en un santuario con nuestra guía paso a paso de limpieza profunda. Cronograma estacional, productos caseros vs comerciales, técnicas profesionales y trucos para cada habitación. Ahorra hasta $200 al mes limpiando como un experto.',
-    category: 'Limpieza',
-    date: '2025-01-05',
-    readTime: '8 min',
-    image: '/blog/limpieza-profunda.jpg'
-  },
-  {
-    id: 'jardineria-cuenca-clima',
-    title: 'Plantas Ideales para el Clima de Cuenca: Guía de Jardinería',
-    excerpt: 'Aprovecha el clima único de Cuenca (2560m altitud, 15°C promedio) para crear un jardín espectacular. Lista de 25+ plantas nativas resistentes, calendario de siembra, técnicas de riego eficiente y cómo proteger del granizo. Incluye mapas de viveros locales y precios.',
-    category: 'Jardinería',
-    date: '2025-01-03',
-    readTime: '10 min',
-    image: '/blog/jardineria-cuenca.jpg'
-  }
-]
+const blogPosts = getBlogPosts()
+const categories = ['Todos', ...getAllCategories()]
 
-const categories = ['Todos', 'Plomería', 'Electricidad', 'Carpintería', 'Limpieza', 'Jardinería', 'Precios']
+// Utility function to format dates consistently on server and client
+const formatDate = (date: Date): string => {
+  // Use UTC methods to ensure consistent formatting across server and client
+  const utcDate = new Date(date.getTime())
+  return `${utcDate.getUTCDate()}/${utcDate.getUTCMonth() + 1}/${utcDate.getUTCFullYear()}`
+}
 
 // Component that uses searchParams - needs to be wrapped in Suspense
 function BlogContent() {
   const searchParams = useSearchParams()
   const [selectedCategory, setSelectedCategory] = useState('Todos')
   const [filteredPosts, setFilteredPosts] = useState(blogPosts)
+  const [email, setEmail] = useState('')
+  const [isSubscribing, setIsSubscribing] = useState(false)
+  const [subscriptionMessage, setSubscriptionMessage] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
   
   useEffect(() => {
     const categoryParam = searchParams.get('category')
@@ -79,15 +33,49 @@ function BlogContent() {
   }, [searchParams])
   
   useEffect(() => {
-    if (selectedCategory === 'Todos') {
-      setFilteredPosts(blogPosts)
-    } else {
-      setFilteredPosts(blogPosts.filter(post => post.category === selectedCategory))
+    let filtered = blogPosts
+    
+    // Filter by category
+    if (selectedCategory !== 'Todos') {
+      filtered = filtered.filter(post => post.category === selectedCategory)
     }
-  }, [selectedCategory])
+    
+    // Filter by search term
+    if (searchTerm) {
+      filtered = filtered.filter(post => 
+        post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        post.tags?.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+      )
+    }
+    
+    setFilteredPosts(filtered)
+  }, [selectedCategory, searchTerm])
   
   const featuredPost = filteredPosts.find(post => post.featured) || filteredPosts[0]
   const regularPosts = filteredPosts.filter(post => post.id !== featuredPost?.id)
+
+  // Newsletter signup handler
+  const handleNewsletterSignup = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email || !email.includes('@')) {
+      setSubscriptionMessage('Por favor ingresa un email válido')
+      return
+    }
+    
+    setIsSubscribing(true)
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      setSubscriptionMessage('¡Gracias! Te has suscrito exitosamente.')
+      setEmail('')
+    } catch (error) {
+      setSubscriptionMessage('Error al suscribirse. Inténtalo de nuevo.')
+    } finally {
+      setIsSubscribing(false)
+      setTimeout(() => setSubscriptionMessage(''), 5000)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -131,6 +119,21 @@ function BlogContent() {
           {/* Sidebar */}
           <aside className="lg:w-80 flex-shrink-0">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sticky top-6">
+              {/* Search Box */}
+              <div className="mb-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                  <span className="text-xl">🔍</span>
+                  Buscar
+                </h3>
+                <input
+                  type="text"
+                  placeholder="Buscar artículos..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+              
               <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                 <span className="text-2xl">📚</span>
                 Categorías
@@ -186,7 +189,7 @@ function BlogContent() {
                 </h4>
                 <div className="space-y-3">
                   {blogPosts.slice(0, 3).map((post) => (
-                    <Link key={post.id} href={`/blog/${post.id}`}>
+                    <Link key={post.id} href={`/blog/${post.slug}`}>
                       <div className="p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
                         <h5 className="font-medium text-gray-900 text-sm line-clamp-2 mb-1">
                           {post.title}
@@ -194,7 +197,7 @@ function BlogContent() {
                         <div className="flex items-center gap-2 text-xs text-gray-500">
                           <span>{post.category}</span>
                           <span>•</span>
-                          <span>{post.readTime}</span>
+                          <span>{post.readTime} min</span>
                         </div>
                       </div>
                     </Link>
@@ -208,14 +211,28 @@ function BlogContent() {
                 <p className="text-sm text-white/90 mb-4">
                   Recibe tips semanales para tu hogar
                 </p>
-                <input
-                  type="email"
-                  placeholder="Tu email"
-                  className="w-full px-3 py-2 rounded-lg text-gray-900 text-sm mb-3"
-                />
-                <button className="w-full bg-white text-purple-600 px-3 py-2 rounded-lg font-medium text-sm hover:bg-gray-100 transition-all">
-                  Suscribirse
-                </button>
+                <form onSubmit={handleNewsletterSignup}>
+                  <input
+                    type="email"
+                    placeholder="Tu email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg text-gray-900 text-sm mb-3"
+                    disabled={isSubscribing}
+                  />
+                  <button 
+                    type="submit"
+                    disabled={isSubscribing}
+                    className="w-full bg-white text-purple-600 px-3 py-2 rounded-lg font-medium text-sm hover:bg-gray-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSubscribing ? 'Suscribiendo...' : 'Suscribirse'}
+                  </button>
+                  {subscriptionMessage && (
+                    <p className={`text-xs mt-2 ${subscriptionMessage.includes('Error') || subscriptionMessage.includes('válido') ? 'text-red-200' : 'text-green-200'}`}>
+                      {subscriptionMessage}
+                    </p>
+                  )}
+                </form>
               </div>
             </div>
           </aside>
@@ -224,12 +241,21 @@ function BlogContent() {
           <main className="flex-1">
             <div className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                {selectedCategory === 'Todos' ? 'Todos los Artículos' : `Categoría: ${selectedCategory}`}
+                {searchTerm ? `Resultados para "${searchTerm}"` : 
+                 selectedCategory === 'Todos' ? 'Todos los Artículos' : `Categoría: ${selectedCategory}`}
               </h2>
               <p className="text-gray-600">
-                {filteredPosts.length} artículo{filteredPosts.length !== 1 ? 's' : ''} 
-                {selectedCategory !== 'Todos' && ` en ${selectedCategory}`}
+                {filteredPosts.length} artículo{filteredPosts.length !== 1 ? 's' : ''} encontrado{filteredPosts.length !== 1 ? 's' : ''}
+                {searchTerm && selectedCategory !== 'Todos' && ` en ${selectedCategory}`}
               </p>
+              {searchTerm && (
+                <button 
+                  onClick={() => setSearchTerm('')}
+                  className="mt-2 text-purple-600 hover:text-purple-800 text-sm font-medium"
+                >
+                  ← Limpiar búsqueda
+                </button>
+              )}
             </div>
 
             {/* Featured Post */}
@@ -238,18 +264,18 @@ function BlogContent() {
                 <h3 className="text-xl font-bold text-gray-900 mb-6">
                   {selectedCategory === 'Todos' ? 'Artículo Destacado' : `Destacado en ${selectedCategory}`}
                 </h3>
-                <Link href={`/blog/${featuredPost.id}`}>
+                <Link href={`/blog/${featuredPost.slug}`}>
                   <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-8 text-white hover:shadow-xl transition-all cursor-pointer">
                     <div className="flex items-center gap-4 mb-4">
                       <span className="bg-white/20 text-white px-3 py-1 rounded-full text-sm font-medium">
                         {featuredPost.category}
                       </span>
-                      <span className="text-white/80 text-sm">{featuredPost.readTime} de lectura</span>
+                      <span className="text-white/80 text-sm">{featuredPost.readTime} min de lectura</span>
                     </div>
                     <h4 className="text-3xl font-bold mb-4">{featuredPost.title}</h4>
                     <p className="text-xl text-white/90 mb-6">{featuredPost.excerpt}</p>
                     <div className="flex items-center justify-between">
-                      <span className="text-white/80">{new Date(featuredPost.date).toLocaleDateString('es-ES')}</span>
+                      <span className="text-white/80">{featuredPost.publishedAtFormatted}</span>
                       <span className="bg-white text-purple-600 px-4 py-2 rounded-full font-medium">
                         Leer más →
                       </span>
@@ -266,9 +292,9 @@ function BlogContent() {
               </h3>
               <div className="grid md:grid-cols-2 gap-6">
             {regularPosts.map((post) => (
-              <Link key={post.id} href={`/blog/${post.id}`}>
+              <Link key={post.id} href={`/blog/${post.slug}`}>
                 <article className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all cursor-pointer overflow-hidden">
-                  <div className="h-48 bg-gradient-to-br relative overflow-hidden" style={{
+                  <div className="h-48 relative overflow-hidden" style={{
                     background: post.category === 'Electricidad' ? 'linear-gradient(to bottom right, #fef3c7, #fcd34d)' :
                                post.category === 'Precios' ? 'linear-gradient(to bottom right, #dcfce7, #86efac)' :
                                post.category === 'Carpintería' ? 'linear-gradient(to bottom right, #f3e8ff, #c4b5fd)' :
@@ -276,8 +302,9 @@ function BlogContent() {
                                post.category === 'Jardinería' ? 'linear-gradient(to bottom right, #f0fdf4, #bbf7d0)' :
                                'linear-gradient(to bottom right, #f3f4f6, #d1d5db)'
                   }}>
+                    {/* TODO: When ready to implement AI images, replace this section with img tags */}
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-6xl">
+                      <span className="text-6xl drop-shadow-lg">
                         {post.category === 'Electricidad' ? '⚡' :
                          post.category === 'Precios' ? '💰' :
                          post.category === 'Carpintería' ? '🔨' :
@@ -287,16 +314,16 @@ function BlogContent() {
                     </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
                     <div className="absolute top-4 left-4">
-                      <span className="bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                      <span className="bg-purple-600/90 text-white px-3 py-1 rounded-full text-sm font-medium backdrop-blur-sm">
                         {post.category}
                       </span>
                     </div>
                   </div>
                   <div className="p-6">
                     <div className="flex items-center gap-4 mb-3 text-sm text-gray-600">
-                      <span>{new Date(post.date).toLocaleDateString('es-ES')}</span>
+                      <span>{post.publishedAtFormatted}</span>
                       <span>•</span>
-                      <span>{post.readTime} de lectura</span>
+                      <span>{post.readTime} min de lectura</span>
                     </div>
                     <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
                       {post.title}
