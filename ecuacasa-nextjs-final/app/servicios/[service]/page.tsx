@@ -1,6 +1,9 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { supabase } from '@/lib/supabase'
+
+export const revalidate = 3600 // Revalidates every hour for fresh content
 
 interface ServicePageProps {
   params: Promise<{
@@ -266,6 +269,33 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
   }
 }
 
+// Live availability component for real-time SEO impact
+async function ServiceAvailability({ service }: { service: string }) {
+  try {
+    const { count } = await supabase
+      .from('providers')
+      .select('*', { count: 'exact', head: true })
+      .eq('service_type', service)
+      .eq('verified', true)
+
+    return (
+      <div className="bg-green-50 p-4 rounded-lg mb-6 max-w-md mx-auto">
+        <p className="text-lg font-semibold text-green-800 text-center">
+          ⚡ {count || 0} profesionales disponibles ahora
+        </p>
+      </div>
+    )
+  } catch (error) {
+    return (
+      <div className="bg-green-50 p-4 rounded-lg mb-6 max-w-md mx-auto">
+        <p className="text-lg font-semibold text-green-800 text-center">
+          ⚡ Profesionales disponibles ahora
+        </p>
+      </div>
+    )
+  }
+}
+
 export default async function ServicePage({ params }: ServicePageProps) {
   const { service } = await params
   const serviceInfo = serviceData[service]
@@ -333,6 +363,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
             <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">
               {serviceInfo.name} en Cuenca
             </h1>
+            <ServiceAvailability service={service} />
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
               {serviceInfo.content.intro}
             </p>

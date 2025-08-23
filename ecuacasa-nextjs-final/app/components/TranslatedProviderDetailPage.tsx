@@ -7,6 +7,7 @@ import BookingModal from './BookingModal'
 import { useClerkSafe } from '../hooks/useClerkSafe'
 import Link from 'next/link'
 import { ArrowLeft, Star, Shield, Clock, MapPin, Phone, MessageCircle, Calendar, Award, CheckCircle, Users, DollarSign, Wrench, Camera, Heart } from 'lucide-react'
+import ProviderLocationMap from './ProviderLocationMap'
 
 interface TranslatedProviderDetailPageProps {
   providerId: string
@@ -325,6 +326,12 @@ export default function TranslatedProviderDetailPage({ providerId }: TranslatedP
                         </div>
                       ))}
                     </div>
+                  </div>
+
+                  {/* Location Map */}
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-4">Ubicación</h3>
+                    <ProviderLocationMap provider={provider} />
                   </div>
 
                   {/* Additional Info */}

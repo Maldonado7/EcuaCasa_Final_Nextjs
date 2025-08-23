@@ -23,6 +23,7 @@ function MapComponent({ providers, onProviderSelect }: ProvidersMapProps) {
   const ref = useRef<HTMLDivElement>(null)
   const [map, setMap] = useState<google.maps.Map>()
   const [infoWindow, setInfoWindow] = useState<google.maps.InfoWindow>()
+  const markersRef = useRef<google.maps.Marker[]>([])
 
   // Cuenca coordinates
   const cuencaCenter = { lat: -2.9005, lng: -79.0067 }
@@ -73,73 +74,117 @@ function MapComponent({ providers, onProviderSelect }: ProvidersMapProps) {
     }
   }, [ref, map])
 
+  // Clear existing markers
+  const clearMarkers = () => {
+    markersRef.current.forEach(marker => {
+      try {
+        marker.setMap(null)
+      } catch (error) {
+        console.error('Error clearing marker:', error)
+      }
+    })
+    markersRef.current = []
+  }
+
   // Add markers for providers
   useEffect(() => {
-    if (map && providers.length > 0) {
-      // Clear existing markers
-      providers.forEach((provider, index) => {
-        const position = getProviderCoordinates(provider.location, index)
-        
-        const marker = new google.maps.Marker({
-          position,
-          map,
-          title: provider.name,
-          icon: {
-            url: 'data:image/svg+xml;base64,' + btoa(`
-              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="16" cy="16" r="12" fill="#7c3aed" stroke="white" stroke-width="2"/>
-                <text x="16" y="20" text-anchor="middle" fill="white" font-family="Arial" font-size="14" font-weight="bold">
-                  ${provider.name.charAt(0).toUpperCase()}
-                </text>
-              </svg>
-            `),
-            scaledSize: new google.maps.Size(32, 32)
-          }
-        })
-
-        marker.addListener('click', () => {
-          const content = `
-            <div style="max-width: 250px; padding: 12px;">
-              <h3 style="margin: 0 0 8px 0; color: #1f2937; font-size: 16px; font-weight: bold;">
-                ${provider.name}
-              </h3>
-              <p style="margin: 0 0 8px 0; color: #7c3aed; font-weight: 600; font-size: 14px;">
-                ${provider.service_type}
-              </p>
-              <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 12px;">
-                📍 ${provider.location}
-              </p>
-              <div style="display: flex; align-items: center; gap: 4px; margin: 8px 0;">
-                <span style="color: #fbbf24;">⭐</span>
-                <span style="font-weight: bold; font-size: 14px;">${provider.rating}</span>
-              </div>
-              <button 
-                onclick="window.location.href='/providers/${provider.id}'"
-                style="
-                  background: #7c3aed; 
-                  color: white; 
-                  border: none; 
-                  padding: 8px 16px; 
-                  border-radius: 8px; 
-                  font-weight: 600; 
-                  cursor: pointer;
-                  font-size: 12px;
-                  margin-top: 8px;
-                "
-              >
-                Ver Perfil
-              </button>
-            </div>
-          `
-          
-          if (infoWindow) {
-            infoWindow.setContent(content)
-            infoWindow.open(map, marker)
-          }
-        })
-      })
+    if (!map || !providers.length) {
+      clearMarkers()
+      return
     }
-  }, [map, providers, infoWindow])
+
+    try {
+      // Clear existing markers first
+      clearMarkers()
+
+      // Create new markers
+      providers.forEach((provider, index) => {
+        try {
+          const position = getProviderCoordinates(provider.location, index)
+          
+          const marker = new google.maps.Marker({
+            position,
+            map,
+            title: provider.name || 'Profesional',
+            icon: {
+              url: 'data:image/svg+xml;base64,' + btoa(`
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="16" cy="16" r="12" fill="#7c3aed" stroke="white" stroke-width="2"/>
+                  <text x="16" y="20" text-anchor="middle" fill="white" font-family="Arial" font-size="14" font-weight="bold">
+                    ${(provider.name || 'P').charAt(0).toUpperCase()}
+                  </text>
+                </svg>
+              `),
+              scaledSize: new google.maps.Size(32, 32)
+            }
+          })
+
+          marker.addListener('click', () => {
+            try {
+              const content = `
+                <div style="max-width: 250px; padding: 12px;">
+                  <h3 style="margin: 0 0 8px 0; color: #1f2937; font-size: 16px; font-weight: bold;">
+                    ${provider.name || 'Profesional'}
+                  </h3>
+                  <p style="margin: 0 0 8px 0; color: #7c3aed; font-weight: 600; font-size: 14px;">
+                    ${provider.service_type || 'Servicio'}
+                  </p>
+                  <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 12px;">
+                    📍 ${provider.location || 'Cuenca'}
+                  </p>
+                  <div style="display: flex; align-items: center; gap: 4px; margin: 8px 0;">
+                    <span style="color: #fbbf24;">⭐</span>
+                    <span style="font-weight: bold; font-size: 14px;">${provider.rating || '5.0'}</span>
+                  </div>
+                  <button 
+                    onclick="window.location.href='/providers/${provider.id}'"
+                    style="
+                      background: #7c3aed; 
+                      color: white; 
+                      border: none; 
+                      padding: 8px 16px; 
+                      border-radius: 8px; 
+                      font-weight: 600; 
+                      cursor: pointer;
+                      font-size: 12px;
+                      margin-top: 8px;
+                      width: 100%;
+                    "
+                  >
+                    Ver Perfil
+                  </button>
+                </div>
+              `
+              
+              if (infoWindow) {
+                infoWindow.setContent(content)
+                infoWindow.open(map, marker)
+              }
+
+              // Call onProviderSelect if provided
+              if (onProviderSelect) {
+                onProviderSelect(provider)
+              }
+            } catch (error) {
+              console.error('Error handling marker click:', error)
+            }
+          })
+
+          // Store marker for cleanup
+          markersRef.current.push(marker)
+        } catch (error) {
+          console.error('Error creating marker for provider:', provider.name, error)
+        }
+      })
+    } catch (error) {
+      console.error('Error in markers useEffect:', error)
+    }
+
+    // Cleanup function
+    return () => {
+      clearMarkers()
+    }
+  }, [map, providers, infoWindow, onProviderSelect])
 
   return <div ref={ref} className="w-full h-full min-h-[600px] rounded-2xl" />
 }
@@ -150,10 +195,16 @@ function MapErrorBoundary({ children, providers }: { children: React.ReactNode, 
 
   useEffect(() => {
     const handleError = (event: ErrorEvent) => {
-      // Check for Google Maps API errors
-      if (event.message?.includes('RefererNotAllowedMapError') || 
-          event.message?.includes('Google Maps') ||
-          event.message?.includes('maps.googleapis.com')) {
+      // Check for Google Maps API errors and IntersectionObserver errors
+      const message = event.message || ''
+      if (message.includes('RefererNotAllowedMapError') || 
+          message.includes('Google Maps') ||
+          message.includes('maps.googleapis.com') ||
+          message.includes('IntersectionObserver') ||
+          message.includes('observe') ||
+          message.includes('marker') ||
+          message.includes('Failed to execute')) {
+        console.warn('Map error detected, switching to fallback:', message)
         setHasError(true)
         event.preventDefault()
         event.stopPropagation()
@@ -190,7 +241,10 @@ function MapErrorBoundary({ children, providers }: { children: React.ReactNode, 
 }
 
 // Fallback component when Google Maps fails
-function MapFallback({ providers }: { providers: Provider[] }) {
+function MapFallback({ providers = [] }: { providers: Provider[] }) {
+  // Ensure providers is always an array
+  const safeProviders = Array.isArray(providers) ? providers : []
+  
   return (
     <div className="w-full h-[600px] bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border border-purple-200 overflow-hidden">
       <div className="h-full flex flex-col">
@@ -200,15 +254,16 @@ function MapFallback({ providers }: { providers: Provider[] }) {
             <div className="text-2xl">🗺️</div>
             <div>
               <h3 className="font-bold text-lg">Ubicaciones de Profesionales</h3>
-              <p className="text-purple-100 text-sm">Cuenca, Ecuador - {providers.length} profesionales</p>
+              <p className="text-purple-100 text-sm">Cuenca, Ecuador - {safeProviders.length} profesionales</p>
             </div>
           </div>
         </div>
 
         {/* Providers List */}
         <div className="flex-1 p-4 overflow-y-auto">
-          <div className="grid gap-3">
-            {providers.slice(0, 8).map((provider, index) => (
+          {safeProviders.length > 0 ? (
+            <div className="grid gap-3">
+              {safeProviders.slice(0, 8).map((provider, index) => (
               <div 
                 key={provider.id} 
                 className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
@@ -218,17 +273,17 @@ function MapFallback({ providers }: { providers: Provider[] }) {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                        {provider.name.charAt(0).toUpperCase()}
+                        {provider.name?.charAt(0)?.toUpperCase() || 'P'}
                       </div>
-                      <h4 className="font-semibold text-gray-900">{provider.name}</h4>
+                      <h4 className="font-semibold text-gray-900">{provider.name || 'Profesional'}</h4>
                     </div>
-                    <p className="text-purple-600 font-medium text-sm mb-1">{provider.service_type}</p>
+                    <p className="text-purple-600 font-medium text-sm mb-1">{provider.service_type || 'Servicio'}</p>
                     <div className="flex items-center gap-4 text-xs text-gray-500">
                       <span className="flex items-center gap-1">
-                        📍 {provider.location}
+                        📍 {provider.location || 'Cuenca'}
                       </span>
                       <span className="flex items-center gap-1">
-                        ⭐ {provider.rating}
+                        ⭐ {provider.rating || '5.0'}
                       </span>
                     </div>
                   </div>
@@ -239,10 +294,10 @@ function MapFallback({ providers }: { providers: Provider[] }) {
               </div>
             ))}
             
-            {providers.length > 8 && (
+            {safeProviders.length > 8 && (
               <div className="text-center py-4">
                 <p className="text-gray-500 text-sm">
-                  y {providers.length - 8} profesionales más...
+                  y {safeProviders.length - 8} profesionales más...
                 </p>
                 <button 
                   onClick={() => window.location.href = '/providers'}
@@ -253,6 +308,20 @@ function MapFallback({ providers }: { providers: Provider[] }) {
               </div>
             )}
           </div>
+          ) : (
+            // Empty state
+            <div className="flex flex-col items-center justify-center h-full text-center">
+              <div className="text-6xl mb-4">📍</div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">No hay profesionales disponibles</h3>
+              <p className="text-gray-600 mb-4">No se encontraron profesionales en esta área</p>
+              <button 
+                onClick={() => window.location.href = '/'}
+                className="bg-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-purple-700 transition-colors"
+              >
+                Volver al Inicio
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Footer */}
@@ -274,12 +343,15 @@ function MapFallback({ providers }: { providers: Provider[] }) {
 }
 
 // Main wrapper component
-export default function ProvidersMap({ providers, onProviderSelect }: ProvidersMapProps) {
+export default function ProvidersMap({ providers = [], onProviderSelect }: ProvidersMapProps) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
 
-  // If no API key, show fallback immediately
-  if (!apiKey) {
-    return <MapFallback providers={providers} />
+  // Ensure providers is always an array
+  const safeProviders = Array.isArray(providers) ? providers : []
+
+  // If no API key or no providers, show fallback immediately
+  if (!apiKey || safeProviders.length === 0) {
+    return <MapFallback providers={safeProviders} />
   }
 
   // Check if we're on an authorized domain for Google Maps
@@ -293,35 +365,37 @@ export default function ProvidersMap({ providers, onProviderSelect }: ProvidersM
       'localhost',
       'ecuacasa.com',
       'www.ecuacasa.com',
-      'ecuacasa-nextjs-final.vercel.app'
+      'ecuacasa-nextjs-final.vercel.app',
+      'github.dev',
+      'codespaces'
     ]
     
     // For development, check if it's a known development pattern
     const isLocalDev = hostname === 'localhost' || hostname === '127.0.0.1'
     const isVercelPreview = hostname.includes('vercel.app')
-    const isGitHubCodespaces = hostname.includes('github.dev')
+    const isGitHubCodespaces = hostname.includes('github.dev') || hostname.includes('codespaces')
     
-    // Only allow localhost and official domains
-    return authorizedDomains.some(domain => hostname.includes(domain)) || isLocalDev
+    // Allow localhost, codespaces and official domains
+    return authorizedDomains.some(domain => hostname.includes(domain)) || isLocalDev || isGitHubCodespaces
   }
 
-  // If not on authorized domain, show fallback immediately to prevent API error
+  // If not on authorized domain, log warning but try to load anyway for development
   if (typeof window !== 'undefined' && !isAuthorizedDomain()) {
-    console.log('Domain not authorized for Google Maps, showing fallback')
-    return <MapFallback providers={providers} />
+    console.warn('Domain may not be authorized for Google Maps API. If map fails to load, the fallback will be shown.')
+    // Don't return fallback immediately - let error boundary handle it
   }
 
   // Try to load Google Maps, fallback on error
   return (
-    <MapErrorBoundary providers={providers}>
+    <MapErrorBoundary providers={safeProviders}>
       <Wrapper 
         apiKey={apiKey} 
         libraries={['places']}
-        version="3.55"
+        version="weekly"
         language="es"
         region="EC"
       >
-        <MapComponent providers={providers} onProviderSelect={onProviderSelect} />
+        <MapComponent providers={safeProviders} onProviderSelect={onProviderSelect} />
       </Wrapper>
     </MapErrorBoundary>
   )
