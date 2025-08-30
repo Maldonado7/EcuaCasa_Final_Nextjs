@@ -1,12 +1,27 @@
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
 
-// Temporarily disable Clerk middleware to avoid JWK mismatch
-export function middleware(request: NextRequest) {
+// Allow public access to sign-up routes
+const isPublicRoute = createRouteMatcher([
+  '/',
+  '/services(.*)',
+  '/providers(.*)',
+  '/how(.*)',
+  '/sign-in(.*)',
+  '/sign-up(.*)',
+  '/sign-up-role(.*)',
+  '/api/send-email(.*)'
+])
+
+export default clerkMiddleware((auth, req) => {
+  const url = req.nextUrl
+  const hostname = req.headers.get('host') || ''
+  const pathname = url.pathname
+  
+  // Temporarily skip auth checks to avoid JWK mismatch
   const response = NextResponse.next()
   
   // Handle mock/test pages with noindex
-  const pathname = request.nextUrl.pathname
   if (pathname.includes('/providers/mock-') || 
       pathname.includes('/providers/test-') || 
       pathname.includes('/cookies-policy')) {
@@ -14,7 +29,7 @@ export function middleware(request: NextRequest) {
   }
   
   return response
-}
+})
 
 export const config = {
   matcher: [
