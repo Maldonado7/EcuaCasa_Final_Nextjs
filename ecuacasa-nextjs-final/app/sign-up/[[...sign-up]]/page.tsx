@@ -36,10 +36,10 @@ export default function Page() {
         
         {/* Sign Up Form */}
         <div className="bg-white rounded-2xl shadow-xl p-6">
-          <SignUp 
+          <SignUp
             appearance={{
               elements: {
-                formButtonPrimary: 
+                formButtonPrimary:
                   'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-sm normal-case',
                 card: 'shadow-none border-0',
                 headerTitle: 'hidden',
@@ -47,7 +47,7 @@ export default function Page() {
                 footerActionLink: 'text-purple-600 hover:text-purple-700 font-medium'
               }
             }}
-            redirectUrl="/"
+            fallbackRedirectUrl="/"
           />
         </div>
 

@@ -3,8 +3,9 @@
 import { SignIn } from '@clerk/nextjs'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { Suspense } from 'react'
 
-export default function Page() {
+function SignInContent() {
   const searchParams = useSearchParams()
   const redirectUrl = searchParams.get('redirect_url') || '/'
   return (
@@ -63,5 +64,17 @@ export default function Page() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-50 to-yellow-50 flex items-center justify-center">
+        <div className="animate-pulse text-purple-600">Cargando...</div>
+      </div>
+    }>
+      <SignInContent />
+    </Suspense>
   )
 }
