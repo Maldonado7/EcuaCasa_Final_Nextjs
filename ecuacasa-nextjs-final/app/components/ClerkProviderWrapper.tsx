@@ -19,8 +19,6 @@ export default function ClerkProviderWrapper({
           card: 'clerk-card',
         },
       }}
-      signInFallbackRedirectUrl="/"
-      signUpFallbackRedirectUrl="/"
     >
       {children}
     </ClerkProvider>
