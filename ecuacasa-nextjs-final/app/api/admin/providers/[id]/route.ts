@@ -14,11 +14,12 @@ const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: providerId } = await params
     const user = await currentUser()
-    
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -26,13 +27,12 @@ export async function PATCH(
     // Check if user is admin
     const isAdmin = user?.emailAddresses?.[0]?.emailAddress === 'admin@ecuacasa.com' ||
                     user?.publicMetadata?.role === 'admin'
-    
+
     if (!isAdmin) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     const { action } = await request.json()
-    const providerId = params.id
 
     if (!action || !['approve', 'reject'].includes(action)) {
       return NextResponse.json({ 
