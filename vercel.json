@@ -1,7 +1,0 @@
-{
-  "version": 2,
-  "framework": "nextjs",
-  "buildCommand": "cd ecuacasa-nextjs-final && npm install && npm run build",
-  "outputDirectory": "ecuacasa-nextjs-final/.next",
-  "installCommand": "echo 'Skipping root install'"
-}
