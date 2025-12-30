@@ -16,7 +16,7 @@ export default function Page() {
           </Link>
           <h1 className="text-3xl font-black text-gray-900 mb-2">Únete a EcuaCasa</h1>
           <p className="text-gray-600">Crea tu cuenta gratis en segundos</p>
-          
+
           {/* Benefits */}
           <div className="mt-4 flex justify-center gap-6 text-sm text-gray-600">
             <div className="flex items-center gap-1">
@@ -33,13 +33,13 @@ export default function Page() {
             </div>
           </div>
         </div>
-        
+
         {/* Sign Up Form */}
         <div className="bg-white rounded-2xl shadow-xl p-6">
-          <SignUp 
+          <SignUp
             appearance={{
               elements: {
-                formButtonPrimary: 
+                formButtonPrimary:
                   'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-sm normal-case',
                 card: 'shadow-none border-0',
                 headerTitle: 'hidden',
@@ -47,7 +47,7 @@ export default function Page() {
                 footerActionLink: 'text-purple-600 hover:text-purple-700 font-medium'
               }
             }}
-            redirectUrl="/"
+            fallbackRedirectUrl="/"
           />
         </div>
 

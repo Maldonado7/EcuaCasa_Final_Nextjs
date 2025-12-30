@@ -1,20 +1,8 @@
-import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-
-const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false
-  },
-  db: {
-    schema: 'public'
-  }
-})
+import { getSupabaseAdmin } from '@/lib/supabase-admin'
 
 export async function POST() {
+  const supabaseAdmin = getSupabaseAdmin()
   try {
     console.log('🚀 Setting up database tables via SQL...')
     
@@ -160,12 +148,13 @@ export async function POST() {
 }
 
 export async function GET() {
+  const supabaseAdmin = getSupabaseAdmin()
   try {
     // Check table status
     const tables: any = {}
-    
+
     const tableNames = ['user_profiles', 'providers', 'bookings', 'cities', 'neighborhoods']
-    
+
     for (const tableName of tableNames) {
       try {
         const { count, error } = await supabaseAdmin

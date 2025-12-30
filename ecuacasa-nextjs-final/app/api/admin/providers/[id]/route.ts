@@ -1,24 +1,15 @@
 import { currentUser } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-
-const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false
-  }
-})
+import { getSupabaseAdmin } from '../../../../../lib/supabase-admin'
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const supabaseAdmin = getSupabaseAdmin()
     const user = await currentUser()
-    
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -26,13 +17,13 @@ export async function PATCH(
     // Check if user is admin
     const isAdmin = user?.emailAddresses?.[0]?.emailAddress === 'admin@ecuacasa.com' ||
                     user?.publicMetadata?.role === 'admin'
-    
+
     if (!isAdmin) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     const { action } = await request.json()
-    const providerId = params.id
+    const { id: providerId } = await params
 
     if (!action || !['approve', 'reject'].includes(action)) {
       return NextResponse.json({ 

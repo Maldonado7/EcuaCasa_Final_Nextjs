@@ -1,57 +1,25 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import React from 'react'
+import { useUser, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
 
-// Safe components that will render the fallback content
-const SafeSignInButton = ({ children, mode }: { children: React.ReactNode, mode?: string }) => {
-  return React.createElement('div', {}, children)
-}
-
-const SafeSignUpButton = ({ children, mode }: { children: React.ReactNode, mode?: string }) => {
-  return React.createElement('div', {}, children)
-}
-
-const SafeUserButton = () => null
-
-// Safe user state hook
+// Re-export Clerk's useUser hook
 export function useSafeUser() {
-  const [userState, setUserState] = useState({
-    isLoaded: false,
-    isSignedIn: false,
-    user: null
-  })
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      try {
-        const { useUser } = require('@clerk/nextjs')
-        const state = useUser()
-        setUserState(state)
-      } catch (e) {
-        setUserState({ isLoaded: true, isSignedIn: false, user: null })
-      }
-    }, 100)
-
-    return () => clearTimeout(timer)
-  }, [])
-
-  return userState
+  return useUser()
 }
 
-// Export safe hook function
+// Export safe hook function with Clerk components
 export const useClerkSafe = () => {
   return {
     useUser: useSafeUser,
-    SignInButton: SafeSignInButton,
-    SignUpButton: SafeSignUpButton,
-    UserButton: SafeUserButton
+    SignInButton,
+    SignUpButton,
+    UserButton
   }
 }
 
 // Export safe components
 export const SafeClerkComponents = {
-  SignInButton: SafeSignInButton,
-  SignUpButton: SafeSignUpButton,
-  UserButton: SafeUserButton
+  SignInButton,
+  SignUpButton,
+  UserButton
 }

@@ -1,11 +1,13 @@
-import { ClerkProvider } from '@clerk/nextjs'
-import { esES } from '@clerk/localizations'
 import { Inter } from 'next/font/google'
 import { TranslationProvider } from './context/TranslationContext'
 import Footer from './components/Footer'
+import ClerkProviderWrapper from './components/ClerkProviderWrapper'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
+
+// Force dynamic rendering to avoid Clerk validation at build time
+export const dynamic = 'force-dynamic'
 
 export const metadata = {
   title: 'EcuaCasa - Servicios para el hogar en Cuenca',
@@ -37,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <ClerkProvider localization={esES}>
+    <ClerkProviderWrapper>
       <html lang="es">
         <head>
           {/* Google tag (gtag.js) */}
@@ -60,6 +62,6 @@ export default function RootLayout({
           </TranslationProvider>
         </body>
       </html>
-    </ClerkProvider>
+    </ClerkProviderWrapper>
   )
 }

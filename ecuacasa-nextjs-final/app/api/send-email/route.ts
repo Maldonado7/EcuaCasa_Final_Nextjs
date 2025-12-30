@@ -1,11 +1,19 @@
 import { Resend } from 'resend'
 import { NextResponse } from 'next/server'
-import { BookingConfirmationEmail } from '../../components/emails/BookingConfirmationEmail'
+import BookingConfirmationEmail from '../../components/emails/BookingConfirmationEmail'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Lazy initialization to avoid build-time errors
+function getResend() {
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey) {
+    throw new Error('Missing RESEND_API_KEY environment variable')
+  }
+  return new Resend(apiKey)
+}
 
 export async function POST(request: Request) {
   try {
+    const resend = getResend()
     const { type, to, data } = await request.json()
 
     let subject = ''
@@ -21,10 +29,11 @@ export async function POST(request: Request) {
           date: data.date,
           time: data.time,
           location: data.location,
-          price: data.price
+          price: data.price,
+          description: data.description || ''
         })
         break
-      
+
       default:
         return NextResponse.json({ error: 'Invalid email type' }, { status: 400 })
     }

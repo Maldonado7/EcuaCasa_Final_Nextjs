@@ -3,10 +3,12 @@
 import { SignIn } from '@clerk/nextjs'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { Suspense } from 'react'
 
-export default function Page() {
+function SignInContent() {
   const searchParams = useSearchParams()
   const redirectUrl = searchParams.get('redirect_url') || '/'
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-50 to-yellow-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -20,13 +22,13 @@ export default function Page() {
           <h1 className="text-3xl font-black text-gray-900 mb-2">Bienvenido de vuelta</h1>
           <p className="text-gray-600">Ingresa a tu cuenta de EcuaCasa</p>
         </div>
-        
+
         {/* Sign In Form */}
         <div className="bg-white rounded-2xl shadow-xl p-6">
-          <SignIn 
+          <SignIn
             appearance={{
               elements: {
-                formButtonPrimary: 
+                formButtonPrimary:
                   'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-sm normal-case',
                 card: 'shadow-none border-0',
                 headerTitle: 'hidden',
@@ -63,5 +65,17 @@ export default function Page() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-50 to-yellow-50 flex items-center justify-center p-4">
+        <div className="animate-pulse">Cargando...</div>
+      </div>
+    }>
+      <SignInContent />
+    </Suspense>
   )
 }

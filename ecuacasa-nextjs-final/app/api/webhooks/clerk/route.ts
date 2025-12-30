@@ -1,22 +1,12 @@
 import { Webhook } from 'svix'
 import { headers } from 'next/headers'
 import { WebhookEvent } from '@clerk/nextjs/server'
-import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-
-const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false
-  }
-})
+import { getSupabaseAdmin } from '../../../../lib/supabase-admin'
 
 export async function POST(req: Request) {
-  // Get the headers
-  const headerPayload = headers()
+  // Get the headers (await required in Next.js 15)
+  const headerPayload = await headers()
   const svix_id = headerPayload.get("svix-id")
   const svix_timestamp = headerPayload.get("svix-timestamp")
   const svix_signature = headerPayload.get("svix-signature")
@@ -50,6 +40,7 @@ export async function POST(req: Request) {
 
   // Handle the webhook
   const eventType = evt.type
+  const supabaseAdmin = getSupabaseAdmin()
 
   if (eventType === 'user.created' || eventType === 'user.updated') {
     const { id, email_addresses, first_name, last_name, phone_numbers, unsafe_metadata } = evt.data

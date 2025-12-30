@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase'
 
 export default async function TestDB() {
+
   // Test connection by fetching tables
   const { data: providers, error: providersError } = await supabase
     .from('providers')
@@ -20,7 +21,7 @@ export default async function TestDB() {
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold mb-4">Database Connection Test</h1>
-      
+
       <div className="space-y-4">
         <div className="bg-gray-100 p-4 rounded">
           <h2 className="font-bold">Providers Table:</h2>

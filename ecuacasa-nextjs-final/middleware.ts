@@ -1,20 +1,47 @@
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-// Temporarily disable Clerk middleware to avoid JWK mismatch
-export function middleware(request: NextRequest) {
+// Define public routes that don't require authentication
+const isPublicRoute = createRouteMatcher([
+  '/',
+  '/services(.*)',
+  '/servicios(.*)',
+  '/providers(.*)',
+  '/blog(.*)',
+  '/sign-in(.*)',
+  '/sign-up(.*)',
+  '/contact(.*)',
+  '/privacy(.*)',
+  '/terms(.*)',
+  '/cookies-policy(.*)',
+  '/how(.*)',
+  '/api/webhooks(.*)',
+  '/api/providers(.*)',
+  '/api/services(.*)',
+  '/api/locations(.*)',
+  '/api/contact(.*)',
+  '/api/uploadthing(.*)',
+])
+
+export default clerkMiddleware(async (auth, request: NextRequest) => {
   const response = NextResponse.next()
-  
-  // Handle mock/test pages with noindex
   const pathname = request.nextUrl.pathname
-  if (pathname.includes('/providers/mock-') || 
-      pathname.includes('/providers/test-') || 
+
+  // Handle mock/test pages with noindex
+  if (pathname.includes('/providers/mock-') ||
+      pathname.includes('/providers/test-') ||
       pathname.includes('/cookies-policy')) {
     response.headers.set('X-Robots-Tag', 'noindex, nofollow')
   }
-  
+
+  // Protect non-public routes
+  if (!isPublicRoute(request)) {
+    await auth.protect()
+  }
+
   return response
-}
+})
 
 export const config = {
   matcher: [
