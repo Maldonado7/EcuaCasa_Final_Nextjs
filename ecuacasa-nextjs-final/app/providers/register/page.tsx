@@ -331,7 +331,7 @@ export default function EnhancedProviderRegistration() {
     } else if (len > 13) {
       return { text: 'Máximo 13 dígitos permitidos', color: 'text-red-600', bgColor: 'bg-red-50', borderColor: 'border-red-300', icon: '⚠️' }
     }
-    return { text: 'Ingresa tu Cédula (10 dígitos) o RUC (13 dígitos)', color: 'text-gray-500', bgColor: '', borderColor: 'border-gray-300', icon: '📝' }
+    return { text: 'Ingresa tu Cédula (10 dígitos) o RUC (13 dígitos)', color: 'text-gray-800', bgColor: '', borderColor: 'border-gray-300', icon: '📝' }
   }
 
   const handleRucCedulaChange = (value: string) => {
@@ -364,7 +364,7 @@ export default function EnhancedProviderRegistration() {
     } else if (numbers.length > 9) {
       return { text: '⚠️ Máximo 9 dígitos permitidos', color: 'text-red-600', icon: '⚠️' }
     }
-    return { text: 'Formato: 9 XXXX XXXX (números móviles Ecuador)', color: 'text-gray-500', icon: '📱' }
+    return { text: 'Formato: 9 XXXX XXXX (números móviles Ecuador)', color: 'text-gray-800', icon: '📱' }
   }
 
   const validateDescription = (text: string) => {
@@ -375,7 +375,7 @@ export default function EnhancedProviderRegistration() {
     } else if (text.length > 0) {
       return { text: `${text.length}/500 - Mínimo 50 caracteres (faltan ${50 - text.length})`, color: 'text-orange-600', icon: '⏳' }
     }
-    return { text: '0/500 - Mínimo 50 caracteres requeridos', color: 'text-gray-500', icon: '📝' }
+    return { text: '0/500 - Mínimo 50 caracteres requeridos', color: 'text-gray-800', icon: '📝' }
   }
 
   const getDescriptionTip = () => {
@@ -502,49 +502,49 @@ export default function EnhancedProviderRegistration() {
     }
   }
 
-  // Loading state
-  if (!isLoaded) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg mx-auto mb-4 animate-pulse">
-            EC
-          </div>
-          <p className="text-gray-600">Cargando...</p>
-        </div>
-      </div>
-    )
-  }
+  // Loading state - temporarily disabled to show form
+  // if (!isLoaded) {
+  //   return (
+  //     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+  //       <div className="text-center">
+  //         <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg mx-auto mb-4 animate-pulse">
+  //           EC
+  //         </div>
+  //         <p className="text-gray-600">Cargando...</p>
+  //       </div>
+  //     </div>
+  //   )
+  // }
 
-  // Not signed in
-  if (!isSignedIn || !user) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
-            Necesitas crear una cuenta
-          </h1>
-          <p className="text-gray-600 mb-6">
-            Para registrarte como profesional, primero debes crear una cuenta gratuita.
-          </p>
-          <div className="flex gap-4 justify-center">
-            <Link 
-              href="/sign-up"
-              className="inline-block bg-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-purple-700 transition-colors text-center"
-            >
-              Crear Cuenta
-            </Link>
-            <Link 
-              href="/sign-in?redirect_url=/providers/register-v2"
-              className="inline-block bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-colors text-center"
-            >
-              Ya tengo cuenta
-            </Link>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  // Not signed in - temporarily disabled to show form
+  // if (!isSignedIn || !user) {
+  //   return (
+  //     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+  //       <div className="text-center">
+  //         <h1 className="text-2xl font-bold text-gray-900 mb-4">
+  //           Necesitas crear una cuenta
+  //         </h1>
+  //         <p className="text-gray-600 mb-6">
+  //           Para registrarte como profesional, primero debes crear una cuenta gratuita.
+  //         </p>
+  //         <div className="flex gap-4 justify-center">
+  //           <Link 
+  //             href="/sign-up"
+  //             className="inline-block bg-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-purple-700 transition-colors text-center"
+  //           >
+  //             Crear Cuenta
+  //           </Link>
+  //           <Link 
+  //             href="/sign-in?redirect_url=/providers/register-v2"
+  //             className="inline-block bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-colors text-center"
+  //           >
+  //             Ya tengo cuenta
+  //           </Link>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   )
+  // }
 
   // Success state
   if (isSuccess) {
@@ -564,7 +564,7 @@ export default function EnhancedProviderRegistration() {
             <Link href="/" className="block w-full bg-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-purple-700 transition-colors">
               Volver al Inicio
             </Link>
-            <Link href="/my-provider-profile" className="block w-full border border-gray-300 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-50 transition-colors">
+            <Link href="/my-provider-profile" className="block w-full border border-gray-300 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-purple-50 transition-colors">
               Ver Mi Perfil Pendiente
             </Link>
           </div>
@@ -581,7 +581,7 @@ export default function EnhancedProviderRegistration() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-3xl font-black text-gray-900">Únete como Profesional</h1>
-              <p className="text-gray-600">Crea tu perfil completo en EcuaCasa</p>
+              <p className="text-gray-900">Crea tu perfil completo en EcuaCasa</p>
             </div>
             <Link href="/providers/register" className="text-sm text-purple-600 hover:text-purple-700">
               ← Formulario Simple
@@ -620,7 +620,7 @@ export default function EnhancedProviderRegistration() {
                       ? 'bg-purple-600 text-white' 
                       : currentStep > step.id 
                         ? 'bg-green-500 text-white'
-                        : 'bg-gray-300 text-gray-600'
+                        : 'bg-white border-2 border-gray-300 text-gray-900'
                     }
                   `}>
                     {currentStep > step.id ? (
@@ -648,14 +648,14 @@ export default function EnhancedProviderRegistration() {
 
       {/* Form Content */}
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8" style={{ backgroundColor: '#ffffff' }}>
           
           {/* Step 1: Basic Information */}
           {currentStep === 1 && (
             <div className="space-y-8">
               <div className="text-center">
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">Información Básica</h2>
-                <p className="text-gray-600">Cuéntanos sobre tu servicio</p>
+                <p className="text-gray-900">Cuéntanos sobre tu servicio</p>
               </div>
 
               {/* Personal Information */}
@@ -667,7 +667,7 @@ export default function EnhancedProviderRegistration() {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
                       Nombre Completo o Empresa *
                     </label>
                     <input
@@ -675,12 +675,13 @@ export default function EnhancedProviderRegistration() {
                       value={formData.name}
                       onChange={(e) => updateFormData('name', e.target.value)}
                       placeholder="Carlos Test"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm text-gray-900 placeholder:text-gray-600"
+                      style={{ color: '#111827', backgroundColor: '#ffffff' }}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
                       Tipo de Cuenta *
                     </label>
                     <div className="space-y-2">
@@ -690,7 +691,8 @@ export default function EnhancedProviderRegistration() {
                           value="individual"
                           checked={formData.accountType === 'individual'}
                           onChange={(e) => updateFormData('accountType', e.target.value)}
-                          className="mr-2"
+                          className="mr-2 w-4 h-4 text-purple-600 bg-white border-gray-300 focus:ring-purple-500"
+                          style={{ backgroundColor: '#ffffff' }}
                         />
                         Profesional Independiente
                       </label>
@@ -700,7 +702,8 @@ export default function EnhancedProviderRegistration() {
                           value="business"
                           checked={formData.accountType === 'business'}
                           onChange={(e) => updateFormData('accountType', e.target.value)}
-                          className="mr-2"
+                          className="mr-2 w-4 h-4 text-purple-600 bg-white border-gray-300 focus:ring-purple-500"
+                          style={{ backgroundColor: '#ffffff' }}
                         />
                         Empresa con RUC
                       </label>
@@ -708,7 +711,7 @@ export default function EnhancedProviderRegistration() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
                       RUC/Cédula *
                     </label>
                     <div className="relative">
@@ -736,7 +739,7 @@ export default function EnhancedProviderRegistration() {
                       onChange={(e) => updateFormData('emiteFactor', e.target.checked)}
                       className="mr-2"
                     />
-                    <label className="text-sm text-gray-700">Emito facturas</label>
+                    <label className="text-sm text-gray-900">Emito facturas</label>
                   </div>
                 </div>
               </div>
@@ -750,12 +753,12 @@ export default function EnhancedProviderRegistration() {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
                       Teléfono/WhatsApp *
                     </label>
                     <div className="relative">
                       <div className="flex">
-                        <div className="flex items-center px-3 py-3 bg-gray-50 border border-r-0 border-gray-300 rounded-l-xl text-gray-600 font-medium">
+                        <div className="flex items-center px-3 py-3 bg-white border border-r-0 border-gray-300 rounded-l-xl text-gray-900 font-medium">
                           +593
                         </div>
                         <input
@@ -763,7 +766,8 @@ export default function EnhancedProviderRegistration() {
                           value={formData.phone}
                           onChange={(e) => handlePhoneChange(e.target.value)}
                           placeholder="9 1234 5678"
-                          className="flex-1 px-4 py-3 border border-gray-300 rounded-r-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                          className="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-r-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm text-gray-900"
+                          style={{ color: '#111827', backgroundColor: '#ffffff' }}
                         />
                       </div>
                       <div className={`text-xs mt-1 flex items-center gap-1 ${validatePhone(formData.phone).color}`}>
@@ -776,9 +780,10 @@ export default function EnhancedProviderRegistration() {
                         type="checkbox"
                         checked={formData.whatsappActive}
                         onChange={(e) => updateFormData('whatsappActive', e.target.checked)}
-                        className="mr-2 w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500"
+                        className="mr-2 w-4 h-4 text-green-600 bg-white border-gray-300 rounded focus:ring-green-500"
+                        style={{ backgroundColor: '#ffffff' }}
                       />
-                      <label className="text-sm text-gray-700 flex items-center gap-1">
+                      <label className="text-sm text-gray-900 flex items-center gap-1">
                         <span className="text-green-600">📱</span>
                         WhatsApp activo para clientes
                       </label>
@@ -786,7 +791,7 @@ export default function EnhancedProviderRegistration() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
                       Teléfono Secundario (Opcional)
                     </label>
                     <input
@@ -794,7 +799,8 @@ export default function EnhancedProviderRegistration() {
                       value={formData.phoneSecondary}
                       onChange={(e) => updateFormData('phoneSecondary', e.target.value)}
                       placeholder="+593 _________"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm text-gray-900 placeholder:text-gray-600"
+                      style={{ color: '#111827', backgroundColor: '#ffffff' }}
                     />
                   </div>
                 </div>
@@ -809,7 +815,7 @@ export default function EnhancedProviderRegistration() {
 
                 <div className="space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
                       Categoría Principal *
                     </label>
                     <select
@@ -818,13 +824,14 @@ export default function EnhancedProviderRegistration() {
                         updateFormData('category', e.target.value)
                         updateFormData('specialties', []) // Reset specialties when category changes
                       }}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm text-gray-900 placeholder:text-gray-600"
+                      style={{ color: '#111827', backgroundColor: '#ffffff' }}
                     >
-                      <option value="">Selecciona una categoría</option>
+                      <option value="" style={{ color: '#6b7280', backgroundColor: '#ffffff' }}>Selecciona una categoría</option>
                       {Object.entries(serviceCategories).map(([group, services]) => (
-                        <optgroup key={group} label={group}>
+                        <optgroup key={group} label={group} style={{ color: '#374151', backgroundColor: '#f9fafb' }}>
                           {services.map(service => (
-                            <option key={service} value={service}>{service}</option>
+                            <option key={service} value={service} style={{ color: '#111827', backgroundColor: '#ffffff' }}>{service}</option>
                           ))}
                         </optgroup>
                       ))}
@@ -846,7 +853,7 @@ export default function EnhancedProviderRegistration() {
                               ? 'bg-red-100 text-red-600' 
                               : formData.specialties.length > 0
                                 ? 'bg-blue-100 text-blue-600'
-                                : 'bg-gray-100 text-gray-600'
+                                : 'bg-purple-50 text-gray-900'
                           }`}>
                             {formData.specialties.length}/3 seleccionadas
                             {formData.specialties.length === 3 && ' ⚠️ Máximo alcanzado'}
@@ -865,7 +872,7 @@ export default function EnhancedProviderRegistration() {
                                   isSelected 
                                     ? 'bg-purple-50 border-purple-300 text-purple-900 ring-1 ring-purple-200' 
                                     : isDisabled 
-                                      ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed'
+                                      ? 'bg-gray-200 border-gray-300 text-gray-500 cursor-not-allowed'
                                       : 'bg-white border-gray-200 hover:border-purple-200 hover:bg-purple-25 hover:shadow-sm'
                                 }`}
                               >
@@ -880,7 +887,8 @@ export default function EnhancedProviderRegistration() {
                                     }
                                   }}
                                   disabled={isDisabled}
-                                  className="mr-3 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                                  className="mr-3 w-4 h-4 text-purple-600 bg-white border-gray-300 rounded focus:ring-purple-500"
+                          style={{ backgroundColor: '#ffffff' }}
                                 />
                                 <div className="flex-1 flex items-center justify-between">
                                   <span className="text-sm font-medium">{specialty.name}</span>
@@ -916,13 +924,14 @@ export default function EnhancedProviderRegistration() {
                   )}
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
                       Años de Experiencia *
                     </label>
                     <select
                       value={formData.experienceYears}
                       onChange={(e) => updateFormData('experienceYears', parseInt(e.target.value))}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm text-gray-900 placeholder:text-gray-600"
+                      style={{ color: '#111827', backgroundColor: '#ffffff' }}
                     >
                       {[...Array(20)].map((_, i) => (
                         <option key={i + 1} value={i + 1}>{i + 1} año{i === 0 ? '' : 's'}</option>
@@ -950,10 +959,11 @@ export default function EnhancedProviderRegistration() {
                       placeholder="Plomero profesional con 6 años de experiencia. Especializado en reparaciones e instalaciones. Trabajo garantizado, presupuesto sin costo. Atención rápida y profesional."
                       rows={4}
                       maxLength={500}
-                      className={`w-full px-4 py-3 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none ${
+                      className={`w-full px-4 py-3 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none text-gray-900 ${
                         formData.description.length >= 50 ? 'border-green-300 bg-green-50' : 
-                        formData.description.length > 0 ? 'border-orange-300 bg-orange-50' : 'border-gray-300'
+                        formData.description.length > 0 ? 'border-orange-300 bg-orange-50' : 'border-gray-300 bg-white'
                       }`}
+                      style={{ color: '#111827', backgroundColor: formData.description.length >= 50 ? '#f0fdf4' : formData.description.length > 0 ? '#fff7ed' : '#ffffff' }}
                     />
                     <div className="space-y-2 mt-2">
                       <div className={`text-xs flex items-center gap-1 ${validateDescription(formData.description).color}`}>
@@ -1041,12 +1051,12 @@ export default function EnhancedProviderRegistration() {
                     <div className="grid md:grid-cols-2 gap-6">
                       {formData.pricingModel === 'hourly' && (
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label className="block text-sm font-medium text-gray-900 mb-2">
                             Precio por Hora * 💰
                           </label>
                           <div className="relative">
                             <div className="flex">
-                              <span className="inline-flex items-center px-3 text-gray-600 bg-gray-50 border border-r-0 border-gray-300 rounded-l-xl">
+                              <span className="inline-flex items-center px-3 text-gray-900 bg-white border border-r-0 border-gray-300 rounded-l-xl">
                                 $
                               </span>
                               <input
@@ -1058,7 +1068,7 @@ export default function EnhancedProviderRegistration() {
                                 max="200"
                                 className="flex-1 px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                               />
-                              <span className="inline-flex items-center px-3 text-gray-600 bg-gray-50 border border-l-0 border-gray-300 rounded-r-xl">
+                              <span className="inline-flex items-center px-3 text-gray-900 bg-white border border-l-0 border-gray-300 rounded-r-xl">
                                 USD/hora
                               </span>
                             </div>
@@ -1071,12 +1081,12 @@ export default function EnhancedProviderRegistration() {
                       )}
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-900 mb-2">
                           Precio Mínimo de Visita 🏠
                         </label>
                         <div className="relative">
                           <div className="flex">
-                            <span className="inline-flex items-center px-3 text-gray-600 bg-gray-50 border border-r-0 border-gray-300 rounded-l-xl">
+                            <span className="inline-flex items-center px-3 text-gray-900 bg-white border border-r-0 border-gray-300 rounded-l-xl">
                               $
                             </span>
                             <input
@@ -1088,7 +1098,7 @@ export default function EnhancedProviderRegistration() {
                               max="100"
                               className="flex-1 px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                             />
-                            <span className="inline-flex items-center px-3 text-gray-600 bg-gray-50 border border-l-0 border-gray-300 rounded-r-xl">
+                            <span className="inline-flex items-center px-3 text-gray-900 bg-white border border-l-0 border-gray-300 rounded-r-xl">
                               USD
                             </span>
                           </div>
@@ -1106,7 +1116,8 @@ export default function EnhancedProviderRegistration() {
                           type="checkbox"
                           checked={formData.freeEstimate}
                           onChange={(e) => updateFormData('freeEstimate', e.target.checked)}
-                          className="mr-3 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                          className="mr-3 w-4 h-4 text-purple-600 bg-white border-gray-300 rounded focus:ring-purple-500"
+                          style={{ backgroundColor: '#ffffff' }}
                         />
                         <label className="text-sm text-gray-700 flex items-center gap-2">
                           <span>🆓</span>
@@ -1121,7 +1132,8 @@ export default function EnhancedProviderRegistration() {
                               type="checkbox"
                               checked={formData.quoteFee > 0}
                               onChange={(e) => updateFormData('quoteFee', e.target.checked ? 10 : 0)}
-                              className="mr-2 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                              className="mr-2 w-4 h-4 text-purple-600 bg-white border-gray-300 rounded focus:ring-purple-500"
+                              style={{ backgroundColor: '#ffffff' }}
                             />
                             <label className="text-sm text-gray-700">Costo por Cotización:</label>
                             <div className="flex items-center gap-1">
@@ -1174,7 +1186,8 @@ export default function EnhancedProviderRegistration() {
                                 updateFormData('paymentMethods', formData.paymentMethods.filter(m => m !== method.value))
                               }
                             }}
-                            className="mr-3 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                            className="mr-3 w-4 h-4 text-purple-600 bg-white border-gray-300 rounded focus:ring-purple-500"
+                          style={{ backgroundColor: '#ffffff' }}
                           />
                           <div className="flex items-center gap-2 flex-1">
                             <span>{method.icon}</span>
@@ -1255,7 +1268,7 @@ export default function EnhancedProviderRegistration() {
                     
                     {(formData.paymentConditions === 'advance_30' || formData.paymentConditions === 'advance_50') && (
                       <div className="mt-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-900 mb-2">
                           Anticipo requerido para trabajos sobre:
                         </label>
                         <div className="flex items-center gap-2 max-w-xs">
@@ -1329,12 +1342,13 @@ export default function EnhancedProviderRegistration() {
                   {/* Additional Services */}
                   <div className="space-y-4">
                     <div className="grid md:grid-cols-1 gap-4">
-                      <label className="flex items-center p-4 border rounded-xl cursor-pointer hover:bg-gray-50">
+                      <label className="flex items-center p-4 border rounded-xl cursor-pointer hover:bg-purple-50">
                         <input
                           type="checkbox"
                           checked={formData.hasInsurance}
                           onChange={(e) => updateFormData('hasInsurance', e.target.checked)}
-                          className="mr-3 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                          className="mr-3 w-4 h-4 text-purple-600 bg-white border-gray-300 rounded focus:ring-purple-500"
+                          style={{ backgroundColor: '#ffffff' }}
                         />
                         <div>
                           <div className="flex items-center gap-2">
@@ -1347,12 +1361,13 @@ export default function EnhancedProviderRegistration() {
                         </div>
                       </label>
 
-                      <label className="flex items-center p-4 border rounded-xl cursor-pointer hover:bg-gray-50">
+                      <label className="flex items-center p-4 border rounded-xl cursor-pointer hover:bg-purple-50">
                         <input
                           type="checkbox"
                           checked={formData.includesMaterials}
                           onChange={(e) => updateFormData('includesMaterials', e.target.checked)}
-                          className="mr-3 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                          className="mr-3 w-4 h-4 text-purple-600 bg-white border-gray-300 rounded focus:ring-purple-500"
+                          style={{ backgroundColor: '#ffffff' }}
                         />
                         <div>
                           <div className="flex items-center gap-2">
@@ -1365,12 +1380,13 @@ export default function EnhancedProviderRegistration() {
                         </div>
                       </label>
 
-                      <label className="flex items-center p-4 border rounded-xl cursor-pointer hover:bg-gray-50">
+                      <label className="flex items-center p-4 border rounded-xl cursor-pointer hover:bg-purple-50">
                         <input
                           type="checkbox"
                           checked={formData.offersContract}
                           onChange={(e) => updateFormData('offersContract', e.target.checked)}
-                          className="mr-3 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                          className="mr-3 w-4 h-4 text-purple-600 bg-white border-gray-300 rounded focus:ring-purple-500"
+                          style={{ backgroundColor: '#ffffff' }}
                         />
                         <div>
                           <div className="flex items-center gap-2">
@@ -1390,7 +1406,7 @@ export default function EnhancedProviderRegistration() {
               {/* Invoice Options */}
               <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-gray-100 rounded-lg">
+                  <div className="p-2 bg-white border border-gray-200 rounded-lg">
                     <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
@@ -1409,7 +1425,7 @@ export default function EnhancedProviderRegistration() {
                   ].map(invoice => (
                     <label 
                       key={invoice.value}
-                      className="flex items-center p-3 border rounded-xl cursor-pointer hover:bg-gray-50"
+                      className="flex items-center p-3 border rounded-xl cursor-pointer hover:bg-purple-50"
                     >
                       <input
                         type="checkbox"
@@ -1456,7 +1472,7 @@ export default function EnhancedProviderRegistration() {
                       </div>
                       
                       {formData.serviceList.map((service, index) => (
-                        <div key={index} className="grid grid-cols-3 gap-4 items-center p-3 bg-gray-50 rounded-lg">
+                        <div key={index} className="grid grid-cols-3 gap-4 items-center p-3 bg-white border border-gray-200 rounded-lg">
                           <input
                             type="text"
                             value={service.service}
@@ -1589,7 +1605,7 @@ export default function EnhancedProviderRegistration() {
 
                 <div className="space-y-4">
                   {['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'].map((day, index) => (
-                    <div key={day} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
+                    <div key={day} className="flex items-center gap-4 p-4 bg-white border border-gray-200 rounded-lg">
                       <div className="w-20">
                         <label className="flex items-center">
                           <input
@@ -1666,7 +1682,7 @@ export default function EnhancedProviderRegistration() {
                 </div>
 
                 <div className="space-y-4">
-                  <label className="flex items-center justify-between p-4 bg-gray-50 rounded-lg cursor-pointer">
+                  <label className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg cursor-pointer">
                     <div className="flex items-center gap-3">
                       <input
                         type="checkbox"
@@ -1685,7 +1701,7 @@ export default function EnhancedProviderRegistration() {
                   {formData.emergencyService && (
                     <div className="pl-7 space-y-3">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-900 mb-2">
                           Tiempo de respuesta máximo
                         </label>
                         <select
@@ -1701,7 +1717,7 @@ export default function EnhancedProviderRegistration() {
                       </div>
                       
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-900 mb-2">
                           Recargo por emergencia
                         </label>
                         <select
@@ -1741,7 +1757,7 @@ export default function EnhancedProviderRegistration() {
                     'Monay', 'Totoracocha', 'El Valle', 'Ricaurte',
                     'Sayausí', 'Chiquintad', 'Molleturo', 'Paccha'
                   ].map((zone) => (
-                    <label key={zone} className="flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
+                    <label key={zone} className="flex items-center p-3 bg-white border border-gray-200 rounded-lg cursor-pointer hover:bg-purple-50 transition-colors">
                       <input
                         type="checkbox"
                         checked={formData.coverageZones?.includes(zone) || false}
@@ -1789,11 +1805,11 @@ export default function EnhancedProviderRegistration() {
 
                 <div className="space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
                       Costo de movilización
                     </label>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                      <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-purple-50">
                         <input
                           type="radio"
                           name="travelCost"
@@ -1808,7 +1824,7 @@ export default function EnhancedProviderRegistration() {
                         </div>
                       </label>
                       
-                      <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                      <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-purple-50">
                         <input
                           type="radio"
                           name="travelCost"
@@ -1823,7 +1839,7 @@ export default function EnhancedProviderRegistration() {
                         </div>
                       </label>
                       
-                      <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                      <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-purple-50">
                         <input
                           type="radio"
                           name="travelCost"
@@ -1842,7 +1858,7 @@ export default function EnhancedProviderRegistration() {
 
                   {formData.travelCost === 'fixed' && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-900 mb-2">
                         Tarifa fija de movilización
                       </label>
                       <div className="relative">
@@ -1862,7 +1878,7 @@ export default function EnhancedProviderRegistration() {
                   )}
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
                       Distancia máxima de trabajo
                     </label>
                     <select
@@ -2162,7 +2178,7 @@ export default function EnhancedProviderRegistration() {
               {/* Final Terms and Conditions */}
               <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-gray-100 rounded-lg">
+                  <div className="p-2 bg-white border border-gray-200 rounded-lg">
                     <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
@@ -2174,7 +2190,7 @@ export default function EnhancedProviderRegistration() {
                 </div>
 
                 <div className="space-y-4">
-                  <label className="flex items-start gap-3 p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
+                  <label className="flex items-start gap-3 p-4 border rounded-lg cursor-pointer hover:bg-purple-50">
                     <input
                       type="checkbox"
                       checked={formData.acceptTerms || false}
@@ -2192,7 +2208,7 @@ export default function EnhancedProviderRegistration() {
                     </div>
                   </label>
 
-                  <label className="flex items-start gap-3 p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
+                  <label className="flex items-start gap-3 p-4 border rounded-lg cursor-pointer hover:bg-purple-50">
                     <input
                       type="checkbox"
                       checked={formData.acceptMarketing || false}
@@ -2219,7 +2235,7 @@ export default function EnhancedProviderRegistration() {
               {currentStep > 1 && (
                 <button
                   onClick={prevStep}
-                  className="flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors"
+                  className="flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-purple-50 transition-colors"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   Anterior

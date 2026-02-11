@@ -52,7 +52,7 @@ export default async function TestSupabase() {
       <div className="bg-gray-100 rounded-lg p-6">
         <h2 className="text-xl font-semibold mb-2">Database Info</h2>
         <p className="mb-2">
-          <strong>URL:</strong> {process.env.NEXT_PUBLIC_SUPABASE_URL || 'Not set'}
+          <strong>URL:</strong> {process.env.NEXT_SERVICE_SUPABASE_URL || 'Not set'}
         </p>
         <p>
           <strong>Anon Key:</strong> {process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? '✓ Set' : '✗ Not set'}
